@@ -28,7 +28,7 @@ slack-token:
 
 ```
 validate-output:
-  This is soley for verification that the code was run fully.
+  This is for verification that the code was run successfully.
 ```
 
 To test locally either run the test-action workflow with unique inputs, or run the main.go locally.
