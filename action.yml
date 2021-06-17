@@ -10,7 +10,7 @@ inputs:
     required: true
     default: "testing"
   slack-token:
-    description: "Slack Token, Can be stored in .slack_token file in root of directory."
+    description: "Slack Token, can be stored as a secret in the repo."
     required: false
 outputs:
   validate-output:
