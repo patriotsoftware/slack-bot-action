@@ -14,7 +14,7 @@ inputs:
     required: false
 outputs:
   validate-output:
-    description: "The latest tag prior to updating found by 'git tag -l'"
+    description: "This is used to validate success of the action."
     value: ${{ steps.trigger-slackbot-channeltest.outputs.validate-output }}
 runs:
   using: 'docker'
