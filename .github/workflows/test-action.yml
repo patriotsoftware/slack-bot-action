@@ -1,0 +1,54 @@
+name: Deploy a New SlackBot
+
+on: 
+  push:
+    branches:
+      - "*"
+      - "!main"
+  workflow_dispatch:
+
+jobs:
+  trigger-slackbot:
+    name: Trigger Slackbot
+    runs-on: ubuntu-20.04
+    env:
+      basefile: index
+    steps:
+      - name: Update Certs of 3rd Parties # for testing locally
+        run: |
+          if [ "$ACT" ]; then
+            apt update && apt install sudo && apt-get install -y ca-certificates && update-ca-certificates
+            apt install -y locales-all
+          fi
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - name: Checkout Action
+        uses: actions/checkout@v2
+
+      - name: Install GO
+        uses: actions/setup-go@v2
+        with:
+          go-version: "^1.16"
+
+      - name: Trigger Slackbot Channel Test
+        id: trigger-slackbot-channeltest
+        uses: ./
+        with:
+          destination: "#aws-alerts"
+          message: "A new slackbot update has been triggered."
+          slack-token: ${{ secrets.SLACK_TOKEN }}
+
+      # Print out the outputs from the previous step
+      - name: Verify Output
+        run: |
+          if [ -z "${{ steps.trigger-slackbot-channeltest.outputs.validate-output }}" ]; then
+            echo "❌ Step did not complete successfully."
+            exit 1
+          fi
+          echo "✅ Action completed"
+          echo "${{ steps.trigger-slackbot-channeltest.outputs.validate-output }}"
+    

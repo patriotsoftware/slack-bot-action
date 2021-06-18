@@ -1,0 +1,23 @@
+name: "slack-bot-action"
+description: "Sends custom message to person or channel of your choice"
+
+inputs:
+  destination:
+    description: "Channel or user that will receive message."
+    required: true
+  message:
+    description: "Message that will be sent."
+    required: true
+    default: "testing"
+  slack-token:
+    description: "Slack Token, can be stored as a secret in the repo."
+    required: false
+outputs:
+  validate-output:
+    description: "This is used to validate success of the action."
+    value: ${{ steps.trigger-slackbot-channeltest.outputs.validate-output }}
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+
+    
