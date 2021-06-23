@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       workdir: ./go/src/hello-gopherjs
-      basefile: index
+      basefile: slack-bot-action
     steps:
       - name: Update Certs of 3rd Parties # for testing locally
         run: |
