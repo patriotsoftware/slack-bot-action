@@ -8,11 +8,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  trigger-slackbot:
-    name: Trigger Slackbot
+  build-test-slackbot:
+    name: Build Slackbot
     runs-on: ubuntu-20.04
     env:
-      basefile: index
+      workdir: ./go/src/hello-gopherjs
+      basefile: slack-bot-action
     steps:
       - name: Update Certs of 3rd Parties # for testing locally
         run: |
@@ -22,23 +23,45 @@ jobs:
           fi
 
       - name: Extract branch name
-        shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
 
-      - name: Checkout Action
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          path: ${{ env.workdir }} # we checkout to a directory that will end up in our GOPATH
 
-      - name: Install GO
-        uses: actions/setup-go@v2
+      - uses: actions/setup-go@v2
         with:
           go-version: "^1.16"
 
+      - name: Build
+        working-directory: ${{ env.workdir }}
+        run: |
+          export GOPATH=${{ github.workspace }}/go
+          GO111MODULE=off go get -u github.com/gopherjs/gopherjs
+          cd $GOPATH/src/github.com/gopherjs/gopherjs/node-syscall/
+          sudo npm install --global node-gyp
+          node-gyp rebuild
+          mkdir -p ~/.node_libraries/
+          cp build/Release/syscall.node ~/.node_libraries/syscall.node
+          cd ${{ github.workspace }}/${{ env.workdir }}
+          npm i
+          go mod vendor
+          export PATH=$PATH:$GOPATH/bin
+          GOPHERJS_GOROOT="$(go env GOROOT)" gopherjs build -o ${{ env.basefile }}.js -m
+
+      - uses: octokit/request-action@v2.x
+        id: get_commit_email
+        with:
+          route: GET /repos/patriotsoftware/slack-bot-action/commits/${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Trigger Slackbot Channel Test
         id: trigger-slackbot-channeltest
-        uses: ./
+        uses: ./go/src/hello-gopherjs
         with:
-          destination: "#aws-alerts"
+          destination: ${{ fromJson(steps.get_commit_email.outputs.data).commit.author.email }}
           message: "A new slackbot update has been triggered."
           slack-token: ${{ secrets.SLACK_TOKEN }}
 
@@ -52,3 +75,10 @@ jobs:
           echo "✅ Action completed"
           echo "${{ steps.trigger-slackbot-channeltest.outputs.validate-output }}"
     
+      - name: Auto-commit JS changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Updated hello-gopherjs GitHub Action src
+          branch: ${{ steps.extract_branch.outputs.branch }}
+          file_pattern: ${{ env.basefile }}.js* node_modules/*
+          repository: ${{ env.workdir }}

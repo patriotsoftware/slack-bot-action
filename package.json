@@ -1,0 +1,22 @@
+{
+  "name": "slack-bot-action",
+  "version": "1.0.0",
+  "description": "A GitHub Action for sending alerts on github actions to slack. We recommend using patriotsoftware/slackbot@v1 to get the latest changes. If new features require breaking changes, we will release them to @v2. You can also use a full semantic version tag.",
+  "main": "slack-bot-action.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patriotsoftware/slack-bot-action.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patriotsoftware/slack-bot-action/issues"
+  },
+  "homepage": "https://github.com/patriotsoftware/slack-bot-action#readme",
+  "dependencies": {
+    "xhr2": "^0.2.1"
+  }
+}

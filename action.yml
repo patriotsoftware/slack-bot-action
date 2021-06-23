@@ -15,9 +15,9 @@ inputs:
 outputs:
   validate-output:
     description: "This is used to validate success of the action."
-    value: ${{ steps.trigger-slackbot-channeltest.outputs.validate-output }}
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: node12
+  main: slack-bot-action.js
+  
 
     

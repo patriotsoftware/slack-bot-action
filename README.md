@@ -32,3 +32,11 @@ validate-output:
 ```
 
 To test locally either run the test-action workflow with unique inputs, or run the main.go locally.
+
+# Testing the action locally
+Running locally does not require gopherjs (it's just used in the action to speed up the startup time). 
+
+- Create a .slack_token file with your slack token
+- `export INPUT_MESSAGE="Your message"`
+- `export INPUT_DESTINATION="#yourChannel"` or `"@your_user"`
+- `go run main.go`
