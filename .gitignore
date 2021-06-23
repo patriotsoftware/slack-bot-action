@@ -1,3 +1,5 @@
 .slack_token
 
 vendor/
+
+node_modules/
