@@ -72,7 +72,7 @@ jobs:
 
       - name: Trigger Slackbot Channel Test
         id: trigger-slackbot-channeltest
-        uses: ${{ env.workdir }}
+        uses: ./go/src/hello-gopherjs
         with:
           destination: ${{ fromJson(steps.get_commit_email.outputs.data).commit.author.email }}
           message: "A new slackbot update has been triggered."
