@@ -16,7 +16,7 @@ func NewClient() (*slack.Client, error) {
 
 	token, ok := os.LookupEnv("INPUT_SLACK-TOKEN")
 	if ok {
-		fmt.Printf("I see token as env variable\n")
+		fmt.Printf("Using slack token from env. \n")
 		return slack.New(token), nil
 	}
 
@@ -25,7 +25,7 @@ func NewClient() (*slack.Client, error) {
 		if err != nil {
 			return nil, err
 		}
-
+		fmt.Printf("Using slack token from .slack_token file. \n")
 		return slack.New(string(fileToken)), nil
 	}
 
