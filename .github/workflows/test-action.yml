@@ -15,8 +15,7 @@ jobs:
       workdir: ./go/src/hello-gopherjs
       basefile: index
     steps:
-    - name: Extract branch name
-        shell: bash
+      - name: Extract branch name
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
 
