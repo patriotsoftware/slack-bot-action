@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-slackbot:
+  build-test-slackbot:
     name: Build Slackbot
     runs-on: ubuntu-20.04
     env:
@@ -37,29 +37,29 @@ jobs:
           node-gyp rebuild
           mkdir -p ~/.node_libraries/
           cp build/Release/syscall.node ~/.node_libraries/syscall.node
-          cd ${{ env.workdir }}
+          cd ${{ github.workspace }}/${{ env.workdir }}
           npm install xhr2
           go mod vendor
           GOPHERJS_GOROOT="$(go env GOROOT)" gopherjs build -o ${{ env.basefile }}.js -m
 
-  trigger-slackbot:
-    name: Trigger Slackbot
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Update Certs of 3rd Parties # for testing locally
-        run: |
-          if [ "$ACT" ]; then
-            apt update && apt install sudo && apt-get install -y ca-certificates && update-ca-certificates
-            apt install -y locales-all
-          fi
+  # trigger-slackbot:
+  #   name: Trigger Slackbot
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - name: Update Certs of 3rd Parties # for testing locally
+  #       run: |
+  #         if [ "$ACT" ]; then
+  #           apt update && apt install sudo && apt-get install -y ca-certificates && update-ca-certificates
+  #           apt install -y locales-all
+  #         fi
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
+      # - name: Extract branch name
+      #   shell: bash
+      #   run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      #   id: extract_branch
 
-      - name: Checkout Action
-        uses: actions/checkout@v2
+      # - name: Checkout Action
+      #   uses: actions/checkout@v2
 
       
       - uses: octokit/request-action@v2.x
