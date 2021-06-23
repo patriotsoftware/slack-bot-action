@@ -41,6 +41,7 @@ jobs:
           npm install xhr2
           go mod vendor
           GOPHERJS_GOROOT="$(go env GOROOT)" gopherjs build -o ${{ env.basefile }}.js -m
+
   trigger-slackbot:
     name: Trigger Slackbot
     runs-on: ubuntu-20.04
@@ -64,7 +65,7 @@ jobs:
       - uses: octokit/request-action@v2.x
         id: get_commit_email
         with:
-          route: GET /repos/SynergyDataSystems/PatriotSoftware.Templates.Apis.Standard/commits/${{ github.sha }}
+          route: GET /repos/patriotsoftware/slack-bot-action/commits/${{ github.sha }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
