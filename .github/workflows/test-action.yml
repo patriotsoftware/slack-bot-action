@@ -15,6 +15,13 @@ jobs:
       workdir: ./go/src/hello-gopherjs
       basefile: index
     steps:
+      - name: Update Certs of 3rd Parties # for testing locally
+        run: |
+          if [ "$ACT" ]; then
+            apt update && apt install sudo && apt-get install -y ca-certificates && update-ca-certificates
+            apt install -y locales-all
+          fi
+
       - name: Extract branch name
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
@@ -38,31 +45,11 @@ jobs:
           mkdir -p ~/.node_libraries/
           cp build/Release/syscall.node ~/.node_libraries/syscall.node
           cd ${{ github.workspace }}/${{ env.workdir }}
-          npm install xhr2
+          npm i
           go mod vendor
           export PATH=$PATH:$GOPATH/bin
           GOPHERJS_GOROOT="$(go env GOROOT)" gopherjs build -o ${{ env.basefile }}.js -m
 
-  # trigger-slackbot:
-  #   name: Trigger Slackbot
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - name: Update Certs of 3rd Parties # for testing locally
-  #       run: |
-  #         if [ "$ACT" ]; then
-  #           apt update && apt install sudo && apt-get install -y ca-certificates && update-ca-certificates
-  #           apt install -y locales-all
-  #         fi
-
-      # - name: Extract branch name
-      #   shell: bash
-      #   run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      #   id: extract_branch
-
-      # - name: Checkout Action
-      #   uses: actions/checkout@v2
-
-      
       - uses: octokit/request-action@v2.x
         id: get_commit_email
         with:
@@ -88,3 +75,10 @@ jobs:
           echo "✅ Action completed"
           echo "${{ steps.trigger-slackbot-channeltest.outputs.validate-output }}"
     
+      - name: Auto-commit JS changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Updated hello-gopherjs GitHub Action src
+          branch: ${{ steps.extract_branch.outputs.branch }}
+          file_pattern: ${{ env.basefile }}.js* node_modules/*
+          repository: ${{ env.workdir }}
