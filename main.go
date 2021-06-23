@@ -30,7 +30,7 @@ func main() {
 
 	_, err = bot.TestAuth()
 	if err != nil {
-		fmt.Printf("Unable to authenticate. Check your .slack_token file. Error: %+v", err)
+		fmt.Printf("Unable to authenticate. Check your .slack_token file. Error: %+v\n", err)
 		os.Exit(1)
 	}
 
