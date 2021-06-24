@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/sethvargo/go-githubactions"
 	"github.com/slack-go/slack"
 )
 
@@ -56,8 +57,7 @@ func (b Bot) PostMessage(destination string, message string) error {
 		userID, err := b.Client.GetUserByEmail(destination)
 
 		if err != nil {
-			fmt.Printf("Unable to get user by email. Error: %+v", err)
-			os.Exit(1)
+			githubactions.Fatalf("Unable to get user by email. Error: %+v", err)
 		}
 		destination = userID.ID
 	}
