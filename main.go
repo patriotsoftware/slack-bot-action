@@ -19,27 +19,27 @@ func main() {
 
 	client, err := NewClient()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not create client")
+		githubactions.Errorf("Could not create client")
 		gjs.Module.Call("process.exit", 1)
 	}
 
 	bot := &Bot{client}
 	_ = bot
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error %+v: \n", err)
+		githubactions.Errorf("Error %+v: \n", err)
 		gjs.Module.Call("process.exit", 2)
 	}
 
 	_, err = bot.TestAuth()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to authenticate. Check your .slack_token file. Error: %+v\n", err)
+		githubactions.Errorf("Unable to authenticate. Check your .slack_token file. Error: %+v\n", err)
 		gjs.Global.Call("ExitAndFail", 3)
 	}
 
 	_ = bot.PostMessage(destination, message)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Oh no! We can't post a message! %+v", err)
+		githubactions.Errorf("Oh no! We can't post a message! %+v", err)
 		gjs.Global.Call("ExitAndFail", 4)
 	}
 
