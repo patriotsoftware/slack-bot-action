@@ -19,15 +19,15 @@ func main() {
 
 	client, err := NewClient()
 	if err != nil {
-		githubactions.Errorf("Could not create client")
-		gjs.Module.Call("process.exit", 1)
+		githubactions.Errorf("Could not create client. Error: %+v \n", err)
+		gjs.Global.Call("ExitAndFail", 1)
 	}
 
 	bot := &Bot{client}
 	_ = bot
 	if err != nil {
 		githubactions.Errorf("Error %+v: \n", err)
-		gjs.Module.Call("process.exit", 2)
+		gjs.Global.Call("ExitAndFail", 2)
 	}
 
 	_, err = bot.TestAuth()
