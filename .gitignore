@@ -1,3 +1,5 @@
 .slack_token
 
 vendor/
+
+test-action.sh
