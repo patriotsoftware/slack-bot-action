@@ -16,13 +16,13 @@ inputs:
     description: "List of job results to append to the message. New line separated with:  job:result"
     required: false
   github-token:
-    description: "GitHub Repository to for getting commit email. Use: ${{ secrets.GITHUB_TOKEN }}"
+    description: "GitHub Repository to for getting commit email. Use: secrets.GITHUB_TOKEN "
     required: false
   github-repository:
-    description: "GitHub Repository to for getting commit email. Use: ${{ github.repository }}"
+    description: "GitHub Repository to for getting commit email. Use: github.repository"
     required: false
   github-sha:
-    description: "GitHub SHA to for getting commit email. Use: ${{ github.sha }}"
+    description: "GitHub SHA to for getting commit email. Use: github.sha"
     required: false
 
 outputs:
