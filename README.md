@@ -22,6 +22,20 @@ slack-token:
   For use in an action, add it as a secret within your repo.
   If you are running main.go directly, you can include a file named .slack_token and include the token there.
   See https://api.slack.com/authentication/token-types for more info.
+results:
+  List of job results to append to the message. Example:
+    job-results: |
+          ${{needs.job-one.name}}:${{needs.job-one.result}}
+          ${{needs.other-job.name}}:${{needs.other-job.result}}
+github-token:
+  GitHub Repository to for getting commit email. 
+  Use this most times: ${{ secrets.GITHUB_TOKEN }}"
+github-repository:
+  GitHub Repository to for getting commit email. 
+  Use this most times: ${{ github.repository }}"
+github-sha:
+  GitHub SHA to for getting commit email.
+  Use this most times: ${{ github.sha }}
 ```
 
 # Outputs
