@@ -97,6 +97,7 @@ func main() {
 
 		if err != nil {
 			githubactions.Warningf("Oh no! We can't post a message to %s! %+v", destination, err)
+			useFallback = true
 		}
 	}
 
