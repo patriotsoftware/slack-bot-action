@@ -18,6 +18,7 @@ func main() {
 	gitSha := githubactions.GetInput("github-sha")
 	replaceRef := githubactions.GetInput("remove-branch-prefix")
 
+	fmt.Println(gitRepo, gitSha)
 	if replaceRef == "true" {
 		message = strings.ReplaceAll(message, "refs/heads/", "")
 	}

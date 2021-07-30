@@ -61,7 +61,7 @@ jobs:
         id: trigger-slackbot-channeltest
         uses: ./go/src/hello-gopherjs
         with:
-          destination: ${{ fromJson(steps.get_commit_email.outputs.data).commit.author.email }}
+          destination: committer
           message: "A new slackbot update has been triggered."
           slack-token: ${{ secrets.SLACK_TOKEN }}
 

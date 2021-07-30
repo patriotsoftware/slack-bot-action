@@ -12,18 +12,22 @@ inputs:
   slack-token:
     description: "Slack Token, can be stored as a secret in the repo."
     required: false
+    default: ${{ secrets.SLACK_TOKEN }}
   results:
     description: "List of job results to append to the message. New line separated with:  job:result"
     required: false
   github-token:
     description: "GitHub Repository to for getting commit email. Use: secrets.GITHUB_TOKEN "
     required: false
+    default: ${{ secrets.GITHUB_TOKEN }}
   github-repository:
     description: "GitHub Repository to for getting commit email. Use: github.repository"
     required: false
+    default: "${{ github.repository }}"
   github-sha:
     description: "GitHub SHA to for getting commit email. Use: github.sha"
     required: false
+    default: "${{ github.sha }}"
   remove-branch-prefix:
     description: "Removes branch /refs/head/ from string instances of /refs/heads. Values: true/false"
     required: false
