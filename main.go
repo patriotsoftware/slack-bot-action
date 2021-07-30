@@ -115,6 +115,7 @@ func main() {
 			githubactions.Errorf("Oh no! We can't post a message to %s! %+v", fallbackDestination, err)
 			gjs.Global.Call("ExitAndFail", 4)
 		}
+		fmt.Println("Fallback destination succeeded.")
 	}
 
 	message = fmt.Sprintf("Message sent to %s.\n", destinations)
