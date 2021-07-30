@@ -9,14 +9,36 @@ import (
 	githubactions "github.com/sethvargo/go-githubactions"
 )
 
+var (
+	destinations []string
+	message      string
+	jobResults   string
+	gitRepo      string
+	gitToken     string
+	gitSha       string
+	replaceRef   string
+)
+
+func init() {
+	destinations = ParseDestinations(githubactions.GetInput("destination"))
+	message = githubactions.GetInput("message")
+	jobResults = githubactions.GetInput("results")
+	gitRepo = githubactions.GetInput("github-repository")
+	if gitRepo == "" {
+		gitRepo = os.Getenv("GITHUB_REPOSITORY")
+	}
+	gitToken = githubactions.GetInput("github-token")
+	gitSha = githubactions.GetInput("github-sha")
+	if gitSha == "" {
+		gitSha = os.Getenv("GITHUB_SHA")
+	}
+	replaceRef = githubactions.GetInput("remove-branch-prefix")
+
+}
+
 func main() {
-	destinations := ParseDestinations(githubactions.GetInput("destination"))
-	message := githubactions.GetInput("message")
-	jobResults := githubactions.GetInput("results")
-	gitRepo := githubactions.GetInput("github-repository")
-	gitToken := githubactions.GetInput("github-token")
-	gitSha := githubactions.GetInput("github-sha")
-	replaceRef := githubactions.GetInput("remove-branch-prefix")
+
+	fmt.Println(gitRepo, gitSha)
 
 	if replaceRef == "true" {
 		message = strings.ReplaceAll(message, "refs/heads/", "")

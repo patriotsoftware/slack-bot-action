@@ -19,10 +19,10 @@ inputs:
     description: "GitHub Repository to for getting commit email. Use: secrets.GITHUB_TOKEN "
     required: false
   github-repository:
-    description: "GitHub Repository to for getting commit email. Use: github.repository"
+    description: "GitHub Repository to for getting commit email. Default: github.repository"
     required: false
   github-sha:
-    description: "GitHub SHA to for getting commit email. Use: github.sha"
+    description: "GitHub SHA to for getting commit email. Default: github.sha"
     required: false
   remove-branch-prefix:
     description: "Removes branch /refs/head/ from string instances of /refs/heads. Values: true/false"
