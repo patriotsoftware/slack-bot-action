@@ -25,8 +25,8 @@ slack-token:
 results:
   List of job results to append to the message. Example:
     job-results: |
-          ${{needs.job-one.name}}:${{needs.job-one.result}}
-          ${{needs.other-job.name}}:${{needs.other-job.result}}
+          Job 1:${{needs.job-one.result}}
+          Job 2:${{needs.other-job.result}}
 github-token:
   GitHub Repository to for getting commit email. 
   Use this most times: ${{ secrets.GITHUB_TOKEN }}"
