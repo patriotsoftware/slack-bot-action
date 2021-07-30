@@ -102,11 +102,16 @@ func main() {
 
 	// When committing using the private email, we may need to fall back
 	if useFallback {
+		if fallbackDestination == "" {
+			githubactions.Errorf("No fallback destination given (`fallback-destination`) and one or more original destinations failed. Exiting.")
+			gjs.Global.Call("ExitAndFail", 4)
+		}
+		githubactions.Warningf("Using fallback destination: %s", fallbackDestination)
 		destinations = append(destinations, fallbackDestination)
 		err = bot.PostMessage(strings.Trim(fallbackDestination, " "), message)
 
 		if err != nil {
-			githubactions.Errorf("Oh no! We can't post a messageto %s! %+v", fallbackDestination, err)
+			githubactions.Errorf("Oh no! We can't post a message to %s! %+v", fallbackDestination, err)
 			gjs.Global.Call("ExitAndFail", 4)
 		}
 	}
