@@ -24,7 +24,7 @@ func ParseJobResults(r string) (string, error) {
 		jobName := job[0]
 		jobResult := job[1]
 		// Blank job names/results mean it did not run
-		if jobName == "" || jobResult == "" {
+		if jobName == "" {
 			continue
 		}
 
@@ -35,8 +35,12 @@ func ParseJobResults(r string) (string, error) {
 }
 
 func newResultLine(jobName, result string) string {
-	if result == "failure" {
+	switch result {
+	case "success":
+		return fmt.Sprintf("✅ %s Succeeded.\n", jobName)
+	case "failure":
 		return fmt.Sprintf("❌ %s Failed.\n", jobName)
+	default:
+		return fmt.Sprintf("❗ %s Didn't Run.\n", jobName)
 	}
-	return fmt.Sprintf("✅ %s Succeeded.\n", jobName)
 }
