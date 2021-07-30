@@ -37,9 +37,6 @@ func init() {
 }
 
 func main() {
-
-	fmt.Println(gitRepo, gitSha)
-
 	if replaceRef == "true" {
 		message = strings.ReplaceAll(message, "refs/heads/", "")
 	}
@@ -47,7 +44,7 @@ func main() {
 	fmt.Printf("Hello, %s! \n%s \n\n%s\n", destinations, message, jobResults)
 
 	_, present := os.LookupEnv("INPUT_SLACK-TOKEN")
-	fmt.Printf("INPUT_SLACK-TOKEN env variable present: %t\n\n", present)
+	githubactions.Debugf("INPUT_SLACK-TOKEN env variable present: %t\n\n", present)
 
 	client, err := NewClient()
 	if err != nil {
