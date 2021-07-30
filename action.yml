@@ -28,6 +28,9 @@ inputs:
     description: "Removes branch /refs/head/ from string instances of /refs/heads. Values: true/false"
     required: false
     default: "true"
+  fallback-destination:
+    description: "Destination to use if any of the destinations fail."
+    required: false
 
 outputs:
   validate-output:

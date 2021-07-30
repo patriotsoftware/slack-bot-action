@@ -10,13 +10,14 @@ import (
 )
 
 var (
-	destinations []string
-	message      string
-	jobResults   string
-	gitRepo      string
-	gitToken     string
-	gitSha       string
-	replaceRef   string
+	destinations        []string
+	message             string
+	jobResults          string
+	gitRepo             string
+	gitToken            string
+	gitSha              string
+	replaceRef          string
+	fallbackDestination string
 )
 
 func init() {
@@ -33,6 +34,7 @@ func init() {
 		gitSha = os.Getenv("GITHUB_SHA")
 	}
 	replaceRef = githubactions.GetInput("remove-branch-prefix")
+	fallbackDestination = githubactions.GetInput("fallback-destination")
 
 }
 
@@ -75,6 +77,7 @@ func main() {
 		message = message + "\n\n" + parsedResults
 	}
 
+	useFallback := false
 	for _, destination := range destinations {
 		if destination == "" {
 			continue
@@ -84,7 +87,7 @@ func main() {
 			email, err := GetCommitEmail(gitRepo, gitSha, gitToken)
 			if err != nil {
 				githubactions.Errorf("Error %+v: \n", err)
-				gjs.Global.Call("ExitAndFail", 2)
+				useFallback = true
 			}
 			destination = email
 			fmt.Println(email)
@@ -96,7 +99,17 @@ func main() {
 			githubactions.Errorf("Oh no! We can't post a message! %+v", err)
 			gjs.Global.Call("ExitAndFail", 4)
 		}
+	}
 
+	// When committing using the private email, we may need to fall back
+	if useFallback {
+		destinations = append(destinations, fallbackDestination)
+		err = bot.PostMessage(strings.Trim(fallbackDestination, " "), message)
+
+		if err != nil {
+			githubactions.Errorf("Oh no! We can't post a message! %+v", err)
+			gjs.Global.Call("ExitAndFail", 4)
+		}
 	}
 
 	message = fmt.Sprintf("Message sent to %s.\n", destinations)
