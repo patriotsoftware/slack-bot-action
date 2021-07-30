@@ -77,7 +77,7 @@ func main() {
 		message = message + "\n\n" + parsedResults
 	}
 
-	useFallback := false
+	var useFallback bool = false
 	for _, destination := range destinations {
 		if destination == "" {
 			continue
@@ -96,8 +96,7 @@ func main() {
 		err = bot.PostMessage(strings.Trim(destination, " "), message)
 
 		if err != nil {
-			githubactions.Errorf("Oh no! We can't post a message! %+v", err)
-			gjs.Global.Call("ExitAndFail", 4)
+			githubactions.Warningf("Oh no! We can't post a message to %s! %+v", destination, err)
 		}
 	}
 
@@ -107,7 +106,7 @@ func main() {
 		err = bot.PostMessage(strings.Trim(fallbackDestination, " "), message)
 
 		if err != nil {
-			githubactions.Errorf("Oh no! We can't post a message! %+v", err)
+			githubactions.Errorf("Oh no! We can't post a messageto %s! %+v", fallbackDestination, err)
 			gjs.Global.Call("ExitAndFail", 4)
 		}
 	}
