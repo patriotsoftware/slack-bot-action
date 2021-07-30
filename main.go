@@ -38,6 +38,8 @@ func init() {
 
 func main() {
 
+	fmt.Println(gitRepo, gitSha)
+
 	if replaceRef == "true" {
 		message = strings.ReplaceAll(message, "refs/heads/", "")
 	}
