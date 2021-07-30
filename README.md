@@ -6,6 +6,12 @@ A GitHub Action for sending alerts on github actions to slack. We recommend usin
 
 ```
 - uses: patriotsoftware/slackbot@v1
+  with:
+      destination: committer
+      message: "A new slackbot update has been triggered."
+      slack-token: ${{ secrets.SLACK_TOKEN }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      fallback-destination: "#channel-if-any-destination-fails"
 ```
 
 
