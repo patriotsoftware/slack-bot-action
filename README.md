@@ -32,10 +32,10 @@ github-token:
   Use this most times: ${{ secrets.GITHUB_TOKEN }}"
 github-repository:
   GitHub Repository to for getting commit email. 
-  Use this most times: ${{ github.repository }}"
+  Default: ${{ github.repository }}"
 github-sha:
   GitHub SHA to for getting commit email.
-  Use this most times: ${{ github.sha }}
+  Default: ${{ github.sha }}
 remove-branch-prefix:
     Removes branch /refs/head/ from string instances of /refs/heads. Values: true/false. Allows use of ${{ github.ref }} to print without /refs/heads
     Default: true
