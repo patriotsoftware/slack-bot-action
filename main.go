@@ -96,8 +96,7 @@ func main() {
 		err = bot.PostMessage(strings.Trim(destination, " "), message)
 
 		if err != nil {
-			githubactions.Errorf("Oh no! We can't post a message! %+v", err)
-			gjs.Global.Call("ExitAndFail", 4)
+			githubactions.Errorf("Oh no! We can't post a message to %s! %+v", destination, err)
 		}
 	}
 
