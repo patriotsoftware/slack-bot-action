@@ -39,6 +39,8 @@ github-sha:
 remove-branch-prefix:
     Removes branch /refs/head/ from string instances of /refs/heads. Values: true/false. Allows use of ${{ github.ref }} to print without /refs/heads
     Default: true
+fallback-destination:
+    The channel (in the format `#channel`) used for when any of the previous destinations fail.
 ```
 
 # Outputs
