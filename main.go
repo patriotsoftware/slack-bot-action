@@ -35,7 +35,6 @@ func init() {
 	}
 	replaceRef = githubactions.GetInput("remove-branch-prefix")
 	fallbackDestination = githubactions.GetInput("fallback-destination")
-
 }
 
 func main() {
