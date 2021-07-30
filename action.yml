@@ -24,6 +24,10 @@ inputs:
   github-sha:
     description: "GitHub SHA to for getting commit email. Use: github.sha"
     required: false
+  remove-branch-prefix:
+    description: "Removes branch /refs/head/ from string instances of /refs/heads. Values: true/false"
+    required: false
+    default: "true"
 
 outputs:
   validate-output:
