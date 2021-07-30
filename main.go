@@ -86,7 +86,7 @@ func main() {
 		if destination == "committer" {
 			email, err := GetCommitEmail(gitRepo, gitSha, gitToken)
 			if err != nil {
-				githubactions.Errorf("Error %+v: \n", err)
+				githubactions.Warningf("Error %+v: \n", err)
 				useFallback = true
 			}
 			destination = email
