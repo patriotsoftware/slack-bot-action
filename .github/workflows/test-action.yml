@@ -64,6 +64,7 @@ jobs:
           destination: committer
           message: "A new slackbot update has been triggered."
           slack-token: ${{ secrets.SLACK_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       # Print out the outputs from the previous step
       - name: Verify Output
