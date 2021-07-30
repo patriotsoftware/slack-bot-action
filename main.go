@@ -17,13 +17,10 @@ func main() {
 	gitToken := githubactions.GetInput("github-token")
 	gitSha := githubactions.GetInput("github-sha")
 
-	fmt.Println(gitRepo, gitToken, gitSha)
-
-	fmt.Printf("Hello, %s! %s \n", destinations, message)
-	fmt.Println(jobResults)
+	fmt.Printf("Hello, %s! \n%s \n\n%s\n", destinations, message, jobResults)
 
 	_, present := os.LookupEnv("INPUT_SLACK-TOKEN")
-	fmt.Printf("INPUT_SLACK-TOKEN env variable present: %t\n", present)
+	fmt.Printf("INPUT_SLACK-TOKEN env variable present: %t\n\n", present)
 
 	client, err := NewClient()
 	if err != nil {
