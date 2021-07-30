@@ -16,6 +16,11 @@ func main() {
 	gitRepo := githubactions.GetInput("github-repository")
 	gitToken := githubactions.GetInput("github-token")
 	gitSha := githubactions.GetInput("github-sha")
+	replaceRef := githubactions.GetInput("remove-branch-prefix")
+
+	if replaceRef == "true" {
+		message = strings.ReplaceAll(message, "refs/heads/", "")
+	}
 
 	fmt.Printf("Hello, %s! \n%s \n\n%s\n", destinations, message, jobResults)
 
