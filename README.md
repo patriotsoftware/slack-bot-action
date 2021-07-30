@@ -6,6 +6,12 @@ A GitHub Action for sending alerts on github actions to slack. We recommend usin
 
 ```
 - uses: patriotsoftware/slackbot@v1
+  with:
+      destination: committer
+      message: "A new slackbot update has been triggered."
+      slack-token: ${{ secrets.SLACK_TOKEN }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      fallback-destination: "#channel-if-any-destination-fails"
 ```
 
 
@@ -22,6 +28,25 @@ slack-token:
   For use in an action, add it as a secret within your repo.
   If you are running main.go directly, you can include a file named .slack_token and include the token there.
   See https://api.slack.com/authentication/token-types for more info.
+results:
+  List of job results to append to the message. Example:
+    job-results: |
+          Job 1:${{needs.job-one.result}}
+          Job 2:${{needs.other-job.result}}
+github-token:
+  GitHub Repository to for getting commit email. 
+  Use this most times: ${{ secrets.GITHUB_TOKEN }}"
+github-repository:
+  GitHub Repository to for getting commit email. 
+  Use this most times: ${{ github.repository }}"
+github-sha:
+  GitHub SHA to for getting commit email.
+  Use this most times: ${{ github.sha }}
+remove-branch-prefix:
+    Removes branch /refs/head/ from string instances of /refs/heads. Values: true/false. Allows use of ${{ github.ref }} to print without /refs/heads
+    Default: true
+fallback-destination:
+    The channel (in the format `#channel`) used for when any of the previous destinations fail.
 ```
 
 # Outputs
