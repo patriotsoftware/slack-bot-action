@@ -86,7 +86,7 @@ func main() {
 		if destination == "committer" {
 			email, err := GetCommitEmail(gitRepo, gitSha, gitToken)
 			if err != nil {
-				githubactions.Errorf("Error %+v: \n", err)
+				githubactions.Warningf("Error %+v: \n", err)
 				useFallback = true
 			}
 			destination = email
@@ -96,7 +96,7 @@ func main() {
 		err = bot.PostMessage(strings.Trim(destination, " "), message)
 
 		if err != nil {
-			githubactions.Errorf("Oh no! We can't post a message to %s! %+v", destination, err)
+			githubactions.Warningf("Oh no! We can't post a message to %s! %+v", destination, err)
 		}
 	}
 
