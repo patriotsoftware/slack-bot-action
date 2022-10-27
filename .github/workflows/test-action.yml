@@ -30,9 +30,9 @@ jobs:
         with:
           path: ${{ env.workdir }} # we checkout to a directory that will end up in our GOPATH
 
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
-          go-version: "^1.16"
+          go-version: "1.18.5"
 
       - name: Build
         working-directory: ${{ env.workdir }}
