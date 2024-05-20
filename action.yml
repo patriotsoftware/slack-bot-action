@@ -35,9 +35,20 @@ inputs:
 outputs:
   validate-output:
     description: "This is used to validate success of the action."
-runs:
-  using: node16
-  main: slack-bot-action.js
-  
+    value: "Foo"
 
-    
+runs:
+  using: composite
+  steps:
+    - name: Greeting
+      run: echo "Hello"
+      shell: bash
+
+    - name: Send Message
+      id: slack
+      uses: slackapi/slack-github-action@v1
+      with:
+        channel-id: 'D013XPX5546'  # cbowles
+        slack-message: 'Hello world!'
+      env:
+          SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
