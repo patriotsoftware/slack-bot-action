@@ -48,7 +48,7 @@ runs:
       id: slack
       uses: slackapi/slack-github-action@v1
       with:
-        channel-id: 'C032HU1P2FK'  # #team-platform-cloudeng
+        channel-id: 'U01434WFRKP'  # cbowles
         slack-message: 'Hello world!'
       env:
           SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
