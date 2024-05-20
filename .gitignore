@@ -1,3 +1,2 @@
 .slack_token
-test-action.sh
-vendor/
+.idea

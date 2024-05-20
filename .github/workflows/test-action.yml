@@ -12,6 +12,9 @@ jobs:
     name: Test Slackbot
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Trigger Slackbot Channel Test
         id: trigger-slackbot-channeltest
         uses: ./
