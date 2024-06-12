@@ -36,7 +36,7 @@ outputs:
   validate-output:
     description: "This is used to validate success of the action."
 runs:
-  using: node16
+  using: node20
   main: slack-bot-action.js
   
 
