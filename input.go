@@ -41,6 +41,6 @@ func newResultLine(jobName, result string) string {
 	case "failure":
 		return fmt.Sprintf("❌ %s Failed.\n", jobName)
 	default:
-		return fmt.Sprintf("❗ %s Didn't Run.\n", jobName)
+		return fmt.Sprintf(":grey_exclamation: %s Didn't Run.\n", jobName)
 	}
 }
