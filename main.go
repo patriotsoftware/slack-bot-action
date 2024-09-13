@@ -72,8 +72,14 @@ func main() {
 		gjs.Global.Call("ExitAndFail", 4)
 	}
 
+	parsedMessage, err := ParseMessage(message)
+	if err != nil {
+		githubactions.Errorf("Unable to parse message urls. Error: %+v\n", err)
+		gjs.Global.Call("ExitAndFail", 4)
+	}
+
 	if parsedResults != "" {
-		message = message + "\n\n" + parsedResults
+		message = parsedMessage + "\n\n" + parsedResults
 	}
 
 	var useFallback bool = false
