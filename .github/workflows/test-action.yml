@@ -40,18 +40,14 @@ jobs:
           export GOPATH=${{ github.workspace }}/go
           GO111MODULE=off go get -u github.com/gopherjs/gopherjs
           cd $GOPATH/src/github.com/gopherjs/gopherjs/node-syscall/
-          echo "1"
           sudo npm install --global node-gyp
           node-gyp rebuild
           mkdir -p ~/.node_libraries/
-          echo "2"
           cp build/Release/syscall.node ~/.node_libraries/syscall.node
           cd ${{ github.workspace }}/${{ env.workdir }}
           npm i
-          echo "2"
           go mod vendor
           export PATH=$PATH:$GOPATH/bin
-          echo "4"
           GOPHERJS_GOROOT="$(go env GOROOT)" gopherjs build -o ${{ env.basefile }}.js -m
 
       - uses: octokit/request-action@v2.x
