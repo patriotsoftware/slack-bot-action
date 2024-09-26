@@ -38,7 +38,7 @@ jobs:
         working-directory: ${{ env.workdir }}
         run: |
           export GOPATH=${{ github.workspace }}/go
-          GO111MODULE=off go get -u github.com/gopherjs/gopherjs
+         
           cd $GOPATH/src/github.com/gopherjs/gopherjs/node-syscall/
           sudo npm install --global node-gyp
           node-gyp rebuild
