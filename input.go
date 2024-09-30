@@ -41,6 +41,6 @@ func newResultLine(jobName, result string) string {
 	case "failure":
 		return fmt.Sprintf("❌ %s Failed.\n", jobName)
 	default: 
-		return fmt.Sprintf("❕ %s Didn't Run.Test\n", jobName)
+		return fmt.Sprintf("❕ %s Didn't Run.\n", jobName)
 	}
 }
