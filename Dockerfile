@@ -1,9 +1,19 @@
-FROM golang:1.23.1-alpine3.20
+# syntax=docker/dockerfile:1
 
-WORKDIR /app
+FROM golang:1.23
 
-COPY ./ ./
 
-RUN go build -o /bin/app main.go
+ENV GOPATH=/go
+WORKDIR $GOPATH/src/slack-bot-action
 
-ENTRYPOINT ["app"]
+# Copy the source code
+COPY . .
+
+# Build your Go application
+RUN go build -o /app 
+
+# Expose the port your application listens on (if applicable)
+EXPOSE 8080
+
+# Run your application
+CMD ["/app"]
