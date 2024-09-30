@@ -45,7 +45,7 @@ jobs:
         id: trigger-slackbot-channeltest
         uses: ./go/src/slack-bot-action
         with:
-          destination: committer
+          destination: committer,#alerts-devops
           message: "A new slackbot update has been triggered."
           slack-token: ${{ secrets.SLACK_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
