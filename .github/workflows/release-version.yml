@@ -1,29 +1,36 @@
-name: Release New Action Version
+name: Release New Bot Version
+
 on:
   workflow_dispatch:
   push:
     branches:
-      - "main"
+      - main
+
+permissions:
+  contents: write
+
 jobs:
   release-action:
     name: Release new version
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
       - name: Bump Version
+        id: bump-version
         uses: patriotsoftware/semver-bump-action@v1
 
-      - name: Build
+      - name: Build Binary
         uses: actions/setup-go@v5
         with:
           go-version: '^1.23'
-      - run: go build -o /app
+      - run: go build -o slack-bot
 
       - name: Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: app
+          make_latest: true
+          tag_name: ${{ steps.bump-version.outputs.resulting-semver-tag }}
+          files: slack-bot

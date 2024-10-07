@@ -31,12 +31,30 @@ inputs:
   fallback-destination:
     description: "Destination to use if any of the destinations fail."
     required: false
-
 outputs:
   validate-output:
     description: "This is used to validate success of the action."
 runs:
-  using: docker
-  image: Dockerfile
-
-    
+  using: composite
+  steps:
+  - name: Download slack-bot release
+    uses: robinraju/release-downloader@v1
+    with:
+      repository: patriotsoftware/slack-bot-action
+      latest: true
+      fileName: slack-bot
+  - name: Run slack-bot
+    shell: bash
+    env:
+      INPUT_DESTINATION: ${{ inputs.destination }}
+      INPUT_MESSAGE: ${{ inputs.message }}
+      INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
+      INPUT_RESULTS: ${{ inputs.results }}
+      INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
+      INPUT_GITHUB_REPOSITORY: ${{ inputs.github_repository }}
+      INPUT_GITHUB_SHA: ${{ inputs.github_sha }}
+      INPUT_REMOVE-BRANCH-PREFIX: ${{ inputs.remove-branch-prefix }}
+      INPUT_FALLBACK-DESTINATION: ${{ inputs.fallback-destination }}
+    run: |
+      chmod +x slack-bot
+      ./slack-bot
