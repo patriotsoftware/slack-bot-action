@@ -1,12 +1,13 @@
 name: Release New Action Version
-on: 
+on:
+  workflow_dispatch:
   push:
     branches:
       - "main"
 jobs:
   release-action:
     name: Release new version
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v2
         with:
@@ -14,3 +15,15 @@ jobs:
 
       - name: Bump Version
         uses: patriotsoftware/semver-bump-action@v1
+
+      - name: Build
+        uses: actions/setup-go@v5
+        with:
+          go-version: '^1.23'
+      - run: go build -o /app
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: app
