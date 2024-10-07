@@ -32,23 +32,7 @@ jobs:
 
       - uses: actions/setup-go@v3
         with:
-          go-version: "1.18.5"
-
-      - name: Build
-        working-directory: ${{ env.workdir }}
-        run: |
-          export GOPATH=${{ github.workspace }}/go
-          GO111MODULE=off go get -u github.com/gopherjs/gopherjs
-          cd $GOPATH/src/github.com/gopherjs/gopherjs/node-syscall/
-          sudo npm install --global node-gyp
-          node-gyp rebuild
-          mkdir -p ~/.node_libraries/
-          cp build/Release/syscall.node ~/.node_libraries/syscall.node
-          cd ${{ github.workspace }}/${{ env.workdir }}
-          npm i
-          go mod vendor
-          export PATH=$PATH:$GOPATH/bin
-          GOPHERJS_GOROOT="$(go env GOROOT)" gopherjs build -o ${{ env.basefile }}.js -m
+          go-version: "1.23"
 
       - uses: octokit/request-action@v2.x
         id: get_commit_email

@@ -36,8 +36,7 @@ outputs:
   validate-output:
     description: "This is used to validate success of the action."
 runs:
-  using: node20
-  main: slack-bot-action.js
-  
+  using: docker
+  image: Dockerfile
 
     
