@@ -1,6 +1,6 @@
-name: Deploy a New SlackBot
+name: Test Action
 
-on: 
+on:
   push:
     branches:
       - "*"
@@ -11,28 +11,12 @@ jobs:
   build-test-slackbot:
     name: Build Slackbot
     runs-on: ubuntu-latest
-    env:
-      workdir: ./go/src/slack-bot-action
-      basefile: slack-bot-action
     steps:
-      - name: Update Certs of 3rd Parties # for testing locally
-        run: |
-          if [ "$ACT" ]; then
-            apt update && apt install sudo && apt-get install -y ca-certificates && update-ca-certificates
-            apt install -y locales-all
-          fi
+      - uses: actions/checkout@v4
 
       - name: Extract branch name
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
-
-      - uses: actions/checkout@v2
-        with:
-          path: ${{ env.workdir }} # we checkout to a directory that will end up in our GOPATH
-
-      - uses: actions/setup-go@v3
-        with:
-          go-version: "1.23"
 
       - uses: octokit/request-action@v2.x
         id: get_commit_email
@@ -43,28 +27,10 @@ jobs:
 
       - name: Trigger Slackbot Channel Test
         id: trigger-slackbot-channeltest
-        uses: ./go/src/slack-bot-action
+        uses: patriotsoftware/slack-bot-action@v1
         with:
           destination: committer
           message: "A new slackbot update has been triggered."
           slack-token: ${{ secrets.SLACK_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           fallback-destination: "#alerts-devops"
-
-      # Print out the outputs from the previous step
-      - name: Verify Output
-        run: |
-          if [ -z "${{ steps.trigger-slackbot-channeltest.outputs.validate-output }}" ]; then
-            echo "❌ Step did not complete successfully."
-            exit 1
-          fi
-          echo "✅ Action completed"
-          echo "${{ steps.trigger-slackbot-channeltest.outputs.validate-output }}"
-    
-      - name: Auto-commit JS changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Updated slack-bot-action GitHub Action src
-          branch: ${{ steps.extract_branch.outputs.branch }}
-          file_pattern: ${{ env.basefile }}.js* node_modules/*
-          repository: ${{ env.workdir }}

@@ -5,7 +5,6 @@ go 1.23
 toolchain go1.23.1
 
 require (
-	github.com/gopherjs/gopherjs v1.17.2
 	github.com/sethvargo/go-githubactions v0.4.0
 	github.com/slack-go/slack v0.9.1
 )

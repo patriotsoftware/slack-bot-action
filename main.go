@@ -5,7 +5,6 @@ import (
 	"os"
 	"strings"
 
-	gjs "github.com/gopherjs/gopherjs/js"
 	githubactions "github.com/sethvargo/go-githubactions"
 )
 
@@ -50,26 +49,26 @@ func main() {
 	client, err := NewClient()
 	if err != nil {
 		githubactions.Errorf("Could not create client. Error: %+v \n", err)
-		gjs.Global.Call("ExitAndFail", 1)
+		panic(err)
 	}
 
 	bot := &Bot{client}
 	_ = bot
 	if err != nil {
 		githubactions.Errorf("Error %+v: \n", err)
-		gjs.Global.Call("ExitAndFail", 2)
+		panic(err)
 	}
 
 	_, err = bot.TestAuth()
 	if err != nil {
 		githubactions.Errorf("Unable to authenticate. Check your .slack_token file. Error: %+v\n", err)
-		gjs.Global.Call("ExitAndFail", 3)
+		panic(err)
 	}
 
 	parsedResults, err := ParseJobResults(jobResults)
 	if err != nil {
 		githubactions.Errorf("Unable to parse job results. Error: %+v\n", err)
-		gjs.Global.Call("ExitAndFail", 4)
+		panic(err)
 	}
 
 	if parsedResults != "" {
@@ -104,7 +103,7 @@ func main() {
 	if useFallback {
 		if fallbackDestination == "" {
 			githubactions.Errorf("No fallback destination given (`fallback-destination`) and one or more original destinations failed. Exiting.")
-			gjs.Global.Call("ExitAndFail", 4)
+			panic(err)
 		}
 		githubactions.Warningf("Using fallback destination: %s", fallbackDestination)
 		destinations = append(destinations, fallbackDestination)
@@ -112,7 +111,7 @@ func main() {
 
 		if err != nil {
 			githubactions.Errorf("Oh no! We can't post a message to %s! %+v", fallbackDestination, err)
-			gjs.Global.Call("ExitAndFail", 4)
+			panic(err)
 		}
 		fmt.Println("Fallback destination succeeded.")
 	}
