@@ -2,22 +2,21 @@
 
 A GitHub Action for sending alerts on github actions to slack. We recommend using patriotsoftware/slackbot@v1 to get the latest changes. If new features require breaking changes, we will release them to @v2. You can also use a full semantic version tag.
 
-# Example Usage
+## Example Usage
 
-```
+```yaml
 - uses: patriotsoftware/slackbot@v1
   with:
-      destination: committer
-      message: "A new slackbot update has been triggered."
-      slack-token: ${{ secrets.SLACK_TOKEN }}
-      github-token: ${{ secrets.GITHUB_TOKEN }}
-      fallback-destination: "#channel-if-any-destination-fails"
+    destination: committer
+    message: "A new slackbot update has been triggered."
+    slack-token: ${{ secrets.SLACK_TOKEN }}
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    fallback-destination: "#channel-if-any-destination-fails"
 ```
 
+## Inputs
 
-# Inputs
-
-```
+```yaml
 destination:
   This is either the channel or email address tied to the user who will receive the direct message.
   If this is a channel it must begin with the '#'.
@@ -34,10 +33,10 @@ results:
           Job 1:${{needs.job-one.result}}
           Job 2:${{needs.other-job.result}}
 github-token:
-  GitHub Repository to for getting commit email. 
+  GitHub Repository to for getting commit email.
   Use this most times: ${{ secrets.GITHUB_TOKEN }}"
 github-repository:
-  GitHub Repository to for getting commit email. 
+  GitHub Repository to for getting commit email.
   Use this most times: ${{ github.repository }}"
 github-sha:
   GitHub SHA to for getting commit email.
@@ -49,17 +48,16 @@ fallback-destination:
     The channel (in the format `#channel`) used for when any of the previous destinations fail.
 ```
 
-# Outputs
+## Outputs
 
-```
+```yaml
 validate-output:
   This is for verification that the code was run successfully.
 ```
 
 To test locally either run the test-action workflow with unique inputs, or run the main.go locally.
 
-# Testing the action locally
-Running locally does not require gopherjs (it's just used in the action to speed up the startup time). 
+## Testing the action locally
 
 - Create a .slack_token file with your slack token
 - `export INPUT_MESSAGE="Your message"`

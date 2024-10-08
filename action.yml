@@ -31,9 +31,6 @@ inputs:
   fallback-destination:
     description: "Destination to use if any of the destinations fail."
     required: false
-outputs:
-  validate-output:
-    description: "This is used to validate success of the action."
 runs:
   using: composite
   steps:
