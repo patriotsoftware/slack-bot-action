@@ -5,35 +5,35 @@ import (
 	"os"
 	"strings"
 
-	githubactions "github.com/sethvargo/go-githubactions"
+	"github.com/sethvargo/go-githubactions"
 )
 
 var (
 	destinations        []string
 	message             string
 	jobResults          string
-	gitRepo             string
-	gitToken            string
-	gitSha              string
 	replaceRef          string
 	fallbackDestination string
+	committer_email     string
+	gha                 githubactions.Action
+	context             *githubactions.GitHubContext
 )
 
 func init() {
-	destinations = ParseDestinations(githubactions.GetInput("destination"))
-	message = githubactions.GetInput("message")
-	jobResults = githubactions.GetInput("results")
-	gitRepo = githubactions.GetInput("github-repository")
-	if gitRepo == "" {
-		gitRepo = os.Getenv("GITHUB_REPOSITORY")
+	gha = *githubactions.New()
+	context, _ = gha.Context()
+
+	if commit, ok := context.Event["head_commit"].(map[string]any); ok {
+		committer := commit["committer"].(map[string]string)
+		committer_email = committer["email"]
 	}
-	gitToken = githubactions.GetInput("github-token")
-	gitSha = githubactions.GetInput("github-sha")
-	if gitSha == "" {
-		gitSha = os.Getenv("GITHUB_SHA")
-	}
-	replaceRef = githubactions.GetInput("remove-branch-prefix")
-	fallbackDestination = githubactions.GetInput("fallback-destination")
+
+	destinations = ParseDestinations(gha.GetInput("destination"))
+	message = gha.GetInput("message")
+	jobResults = gha.GetInput("results")
+
+	replaceRef = gha.GetInput("remove-branch-prefix")
+	fallbackDestination = gha.GetInput("fallback-destination")
 }
 
 func main() {
@@ -44,31 +44,27 @@ func main() {
 	fmt.Printf("Hello, %s! \n%s \n\n%s\n", destinations, message, jobResults)
 
 	_, present := os.LookupEnv("INPUT_SLACK-TOKEN")
-	githubactions.Debugf("INPUT_SLACK-TOKEN env variable present: %t\n\n", present)
+	gha.Infof("INPUT_SLACK-TOKEN env variable present: %t\n\n", present)
 
 	client, err := NewClient()
 	if err != nil {
-		githubactions.Errorf("Could not create client. Error: %+v \n", err)
-		panic(err)
+		gha.Fatalf("Could not create client. Error: %+v \n", err)
 	}
 
 	bot := &Bot{client}
 	_ = bot
 	if err != nil {
-		githubactions.Errorf("Error %+v: \n", err)
-		panic(err)
+		gha.Fatalf("Error %+v: \n", err)
 	}
 
 	_, err = bot.TestAuth()
 	if err != nil {
-		githubactions.Errorf("Unable to authenticate. Check your .slack_token file. Error: %+v\n", err)
-		panic(err)
+		gha.Fatalf("Unable to authenticate. Check your .slack_token file. Error: %+v\n", err)
 	}
 
 	parsedResults, err := ParseJobResults(jobResults)
 	if err != nil {
-		githubactions.Errorf("Unable to parse job results. Error: %+v\n", err)
-		panic(err)
+		gha.Fatalf("Unable to parse job results. Error: %+v\n", err)
 	}
 
 	if parsedResults != "" {
@@ -82,40 +78,36 @@ func main() {
 		}
 
 		if destination == "committer" {
-			email, err := GetCommitEmail(gitRepo, gitSha, gitToken)
-			if err != nil {
-				githubactions.Warningf("Error %+v: \n", err)
-				useFallback = true
-			}
-			destination = email
-			fmt.Println(email)
+			destination = committer_email
+
+			gha.Infof(destination)
 		}
 
-		err = bot.PostMessage(strings.Trim(destination, " "), message)
+		destination = strings.Trim(destination, " ")
 
+		err = bot.PostMessage(destination, message)
 		if err != nil {
-			githubactions.Warningf("Oh no! We can't post a message to %s! %+v", destination, err)
+			gha.Warningf("Oh no! We can't post a message to %s! %+v", destination, err)
 			useFallback = true
 		}
 	}
 
 	// When committing using the private email, we may need to fall back
 	if useFallback {
+		fallbackDestination = strings.Trim(fallbackDestination, " ")
 		if fallbackDestination == "" {
-			githubactions.Errorf("No fallback destination given (`fallback-destination`) and one or more original destinations failed. Exiting.")
-			panic(err)
+			gha.Fatalf("No fallback destination given (`fallback-destination`) and one or more original destinations failed. Exiting.")
 		}
-		githubactions.Warningf("Using fallback destination: %s", fallbackDestination)
-		destinations = append(destinations, fallbackDestination)
-		err = bot.PostMessage(strings.Trim(fallbackDestination, " "), message)
+		gha.Warningf("Using fallback destination: %s", fallbackDestination)
+
+		err = bot.PostMessage(fallbackDestination, message)
 
 		if err != nil {
-			githubactions.Errorf("Oh no! We can't post a message to %s! %+v", fallbackDestination, err)
-			panic(err)
+			gha.Fatalf("Oh no! We can't post a message to %s! %+v", fallbackDestination, err)
 		}
-		fmt.Println("Fallback destination succeeded.")
+		gha.Infof("Fallback destination succeeded.")
 	}
 
 	message = fmt.Sprintf("Message sent to %s.\n", destinations)
-	githubactions.SetOutput("validate-output", message)
+	gha.SetOutput("validate-output", message)
 }

@@ -31,36 +31,46 @@ inputs:
   fallback-destination:
     description: "Destination to use if any of the destinations fail."
     required: false
+    default: '#alerts-unknown-team'
+outputs:
+  validate-output:
+    description: "Status of message"
+    value: ${{ steps.run-slackbot.outputs.validate-output }}
 runs:
   using: composite
   steps:
-  - name: Download slack-bot release
-    uses: robinraju/release-downloader@v1
-    with:
-      repository: patriotsoftware/slack-bot-action
-      latest: true
-      fileName: slack-bot
-  - uses: octokit/request-action@v2.x
-    id: get_commit_email
-    with:
-      route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
-    env:
-      GITHUB_TOKEN: ${{ github.token }}
-  - run: "echo data: '${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}'"
-    shell: bash
-  # - name: Run slack-bot
-  #   shell: bash
-  #   env:
-  #     # INPUT_DESTINATION: ${{ inputs.destination }}
-  #     INPUT_DESTINATION: ${{ fromJson(steps.get_commit_email.outputs.data).committer.email }}
-  #     INPUT_MESSAGE: ${{ inputs.message }}
-  #     INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
-  #     INPUT_RESULTS: ${{ inputs.results }}
-  #     INPUT_GITHUB-TOKEN: ${{ github.token }}
-  #     INPUT_GITHUB-REPOSITORY: ${{ github.repository }}
-  #     INPUT_GITHUB-SHA: ${{ github.sha }}
-  #     INPUT_REMOVE-BRANCH-PREFIX: ${{ inputs.remove-branch-prefix }}
-  #     INPUT_FALLBACK-DESTINATION: ${{ inputs.fallback-destination }}
-  #   run: |
-  #     chmod +x slack-bot
-  #     ./slack-bot
+    # - name: Download Slackbot release
+    #   uses: robinraju/release-downloader@v1
+    #   with:
+    #     repository: patriotsoftware/slack-bot-action
+    #     latest: true
+    #     fileName: slackbot
+
+    - name: Bump Version
+      id: bump-version
+      uses: patriotsoftware/semver-bump-action@v1
+
+    - name: Setup Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: stable
+
+    - name: Run Slackbot
+      id: run-slackbot
+      shell: bash
+      env:
+        INPUT_DESTINATION: ${{ inputs.destination }}
+        INPUT_FALLBACK-DESTINATION: ${{ inputs.fallback-destination }}
+        INPUT_GITHUB-REPOSITORY: ${{ github.repository }}
+        INPUT_GITHUB-SHA: ${{ github.sha }}
+        INPUT_GITHUB-TOKEN: ${{ github.token }}
+        INPUT_MESSAGE: ${{ inputs.message }}
+        INPUT_REMOVE-BRANCH-PREFIX: ${{ inputs.remove-branch-prefix }}
+        INPUT_RESULTS: ${{ inputs.results }}
+        INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
+      run: |
+        # chmod +x slackbot
+
+        # ./slackbot
+
+        go run .
