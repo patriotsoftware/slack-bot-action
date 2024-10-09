@@ -30,7 +30,7 @@ func init() {
 
 func main() {
 	if replaceRef {
-		message = strings.TrimPrefix(message, "refs/heads/")
+		message = strings.ReplaceAll(message, "refs/heads/", "")
 	}
 
 	fmt.Printf("Hello, %s! \n%s \n\n%s\n", destinations, message, jobResults)

@@ -46,11 +46,18 @@ runs:
         latest: true
         fileName: slackbot
 
+    - uses: octokit/request-action@v2.x
+      id: get_commit_email
+      with:
+        route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
     - name: Run Slackbot
       id: run-slackbot
       shell: bash
       env:
-        INPUT_COMMITTER-EMAIL: ${{ github.event.head_commit.committer.email }}
+        INPUT_COMMITTER-EMAIL: ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}
         INPUT_DESTINATION: ${{ inputs.destination }}
         INPUT_FALLBACK-DESTINATION: ${{ inputs.fallback-destination }}
         INPUT_GITHUB-REPOSITORY: ${{ github.repository }}
