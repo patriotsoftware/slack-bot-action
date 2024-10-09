@@ -40,18 +40,27 @@ runs:
       repository: patriotsoftware/slack-bot-action
       latest: true
       fileName: slack-bot
-  - name: Run slack-bot
-    shell: bash
+  - uses: octokit/request-action@v2.x
+    id: get_commit_email
+    with:
+      route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
     env:
-      INPUT_DESTINATION: ${{ inputs.destination }}
-      INPUT_MESSAGE: ${{ inputs.message }}
-      INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
-      INPUT_RESULTS: ${{ inputs.results }}
-      INPUT_GITHUB-TOKEN: ${{ github.token }}
-      INPUT_GITHUB-REPOSITORY: ${{ github.repository }}
-      INPUT_GITHUB-SHA: ${{ github.sha }}
-      INPUT_REMOVE-BRANCH-PREFIX: ${{ inputs.remove-branch-prefix }}
-      INPUT_FALLBACK-DESTINATION: ${{ inputs.fallback-destination }}
-    run: |
-      chmod +x slack-bot
-      ./slack-bot
+      GITHUB_TOKEN: ${{ github.token }}
+  - run: "echo data: '${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}'"
+    shell: bash
+  # - name: Run slack-bot
+  #   shell: bash
+  #   env:
+  #     # INPUT_DESTINATION: ${{ inputs.destination }}
+  #     INPUT_DESTINATION: ${{ fromJson(steps.get_commit_email.outputs.data).committer.email }}
+  #     INPUT_MESSAGE: ${{ inputs.message }}
+  #     INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
+  #     INPUT_RESULTS: ${{ inputs.results }}
+  #     INPUT_GITHUB-TOKEN: ${{ github.token }}
+  #     INPUT_GITHUB-REPOSITORY: ${{ github.repository }}
+  #     INPUT_GITHUB-SHA: ${{ github.sha }}
+  #     INPUT_REMOVE-BRANCH-PREFIX: ${{ inputs.remove-branch-prefix }}
+  #     INPUT_FALLBACK-DESTINATION: ${{ inputs.fallback-destination }}
+  #   run: |
+  #     chmod +x slack-bot
+  #     ./slack-bot
