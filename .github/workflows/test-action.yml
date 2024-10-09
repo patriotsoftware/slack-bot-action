@@ -8,25 +8,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-test-slackbot:
-    name: Build Slackbot
+  test-slackbot:
+    name: Test slackbot
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract branch name
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
-
-      - uses: octokit/request-action@v2.x
-        id: get_commit_email
-        with:
-          route: GET /repos/patriotsoftware/slack-bot-action/commits/${{ github.sha }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo '${{ toJson(github.event) }}'
 
       - name: Trigger Slackbot Channel Test
-        id: trigger-slackbot-channeltest
+        id: trigger-slackbot-channel-test
         uses: patriotsoftware/slack-bot-action@v1
         with:
           destination: committer
@@ -34,3 +25,6 @@ jobs:
           slack-token: ${{ secrets.SLACK_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           fallback-destination: "#alerts-devops"
+
+      - name: Print Status
+        run: echo output from slackbot '${{ steps.trigger-slackbot-channel-test.outputs.validate-output }}'

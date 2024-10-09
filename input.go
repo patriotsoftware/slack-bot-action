@@ -3,8 +3,23 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 )
+
+func ParseBool(v string) bool {
+	if v == "" {
+		return false
+	}
+
+	value, err := strconv.ParseBool(v)
+
+	if err != nil {
+		return false
+	}
+
+	return value
+}
 
 func ParseDestinations(d string) []string {
 	return strings.Split(d, ",")
@@ -40,7 +55,7 @@ func newResultLine(jobName, result string) string {
 		return fmt.Sprintf("✅ %s Succeeded.\n", jobName)
 	case "failure":
 		return fmt.Sprintf("❌ %s Failed.\n", jobName)
-	default: 
+	default:
 		return fmt.Sprintf("❕ %s Didn't Run.\n", jobName)
 	}
 }
