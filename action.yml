@@ -47,9 +47,9 @@ runs:
       INPUT_MESSAGE: ${{ inputs.message }}
       INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
       INPUT_RESULTS: ${{ inputs.results }}
-      INPUT_GITHUB-TOKEN: ${{ inputs.github_token }}
-      INPUT_GITHUB-REPOSITORY: ${{ inputs.github_repository }}
-      INPUT_GITHUB-SHA: ${{ inputs.github_sha }}
+      INPUT_GITHUB-TOKEN: ${{ github.token }}
+      INPUT_GITHUB-REPOSITORY: ${{ github.repository }}
+      INPUT_GITHUB-SHA: ${{ github.sha }}
       INPUT_REMOVE-BRANCH-PREFIX: ${{ inputs.remove-branch-prefix }}
       INPUT_FALLBACK-DESTINATION: ${{ inputs.fallback-destination }}
     run: |
