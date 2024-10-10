@@ -72,6 +72,11 @@ runs:
 
     #     ./slackbot
 
+    - shell: bash
+      id: parse_result
+      run: |
+        echo "output=$(python parser.py ${{ inputs.results }} 2>&1)" >> "$GITHUB_OUTPUT"
+
     - name: Post to a Slack channel
       id: slack
       uses: slackapi/slack-github-action@v1.27.0
@@ -81,6 +86,6 @@ runs:
         # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
         channel-id: '#aws-alerts'
         # For posting a simple plain text message
-        slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        slack-message: ${{ steps.parse_result.outputs.output }} #"GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
