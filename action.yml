@@ -39,35 +39,48 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Download Slackbot release
-      uses: robinraju/release-downloader@v1
+    # - name: Download Slackbot release
+    #   uses: robinraju/release-downloader@v1
+    #   with:
+    #     repository: patriotsoftware/slack-bot-action
+    #     latest: true
+    #     fileName: slackbot
+
+    # - uses: octokit/request-action@v2.x
+    #   id: get_commit_email
+    #   with:
+    #     route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
+    #   env:
+    #     GITHUB_TOKEN: ${{ github.token }}
+
+    # - name: Run Slackbot
+    #   id: run-slackbot
+    #   shell: bash
+    #   env:
+    #     INPUT_COMMITTER-EMAIL: ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}
+    #     INPUT_DESTINATION: ${{ inputs.destination }}
+    #     INPUT_FALLBACK-DESTINATION: ${{ inputs.fallback-destination }}
+    #     INPUT_GITHUB-REPOSITORY: ${{ github.repository }}
+    #     INPUT_GITHUB-SHA: ${{ github.sha }}
+    #     INPUT_GITHUB-TOKEN: ${{ github.token }}
+    #     INPUT_MESSAGE: ${{ inputs.message }}
+    #     INPUT_REMOVE-BRANCH-PREFIX: ${{ inputs.remove-branch-prefix }}
+    #     INPUT_RESULTS: ${{ inputs.results }}
+    #     INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
+    #   run: |
+    #     chmod +x slackbot
+
+    #     ./slackbot
+
+    - name: Post to a Slack channel
+      id: slack
+      uses: slackapi/slack-github-action@v1.27.0
       with:
-        repository: patriotsoftware/slack-bot-action
-        latest: true
-        fileName: slackbot
-
-    - uses: octokit/request-action@v2.x
-      id: get_commit_email
-      with:
-        route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
+        # Slack channel id, channel name, or user id to post message.
+        # See also: https://api.slack.com/methods/chat.postMessage#channels
+        # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
+        channel-id: '#aws-alerts'
+        # For posting a simple plain text message
+        slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
       env:
-        GITHUB_TOKEN: ${{ github.token }}
-
-    - name: Run Slackbot
-      id: run-slackbot
-      shell: bash
-      env:
-        INPUT_COMMITTER-EMAIL: ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}
-        INPUT_DESTINATION: ${{ inputs.destination }}
-        INPUT_FALLBACK-DESTINATION: ${{ inputs.fallback-destination }}
-        INPUT_GITHUB-REPOSITORY: ${{ github.repository }}
-        INPUT_GITHUB-SHA: ${{ github.sha }}
-        INPUT_GITHUB-TOKEN: ${{ github.token }}
-        INPUT_MESSAGE: ${{ inputs.message }}
-        INPUT_REMOVE-BRANCH-PREFIX: ${{ inputs.remove-branch-prefix }}
-        INPUT_RESULTS: ${{ inputs.results }}
-        INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
-      run: |
-        chmod +x slackbot
-
-        ./slackbot
+        SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
