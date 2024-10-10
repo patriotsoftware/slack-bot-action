@@ -1,5 +1,3 @@
-
-
 import sys
 
 def newResultLine(jobresult):
