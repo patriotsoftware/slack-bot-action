@@ -11,6 +11,7 @@ def newResultLine(jobresult):
             return f"❕ {jobresult.split(':')[0]} Didn't Run. \n"
            
 def format_results(inputString):
+    print "Getting Here"
     return "WHAT UP"
 #   jobresult_list = inputString.splitlines()
 #   formatted_list = [newResultLine(result) for result in inputString.splitlines()]
