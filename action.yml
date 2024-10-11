@@ -45,7 +45,6 @@ runs:
       - shell: bash
         id: parse_result
         env:
-          INPUT_COMMITTER-EMAIL: ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}
           INPUT_DESTINATION: ${{ inputs.destination }}
           INPUT_FALLBACK-DESTINATION: ${{ inputs.fallback-destination }}
           INPUT_GITHUB-REPOSITORY: ${{ github.repository }}
