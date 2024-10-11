@@ -10,12 +10,11 @@ def newResultLine(jobresult):
         case _:
             return f"❕ {jobresult.split(':')[0]} Didn't Run. \n"
            
-def format_results():
-   # jobresult_list = inputString.splitlines()
-   # formatted_list = [newResultLine(result) for result in inputString.splitlines()]
-    #return ''.join(formatted_list)
-    #return jobresult_list
-    print("Test successful")
+def format_results(inputString):
+    jobresult_list = inputString.splitlines()
+    formatted_list = [newResultLine(result) for result in inputString.splitlines()]
+    print (''.join(formatted_list))
 
-format_results()
+# format_results(sys.argv[1])
+print(sys.argv[0])
 
