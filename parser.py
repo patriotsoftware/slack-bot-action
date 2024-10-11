@@ -17,5 +17,5 @@ def format_results(inputString):
     #return jobresult_list
     return "Test successful"
 
-format_results(sys.argv[1])
+format_results()
 
