@@ -55,7 +55,7 @@ runs:
           INPUT_RESULTS: ${{ inputs.results }}
           INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
         run: |
-          output=$(python  ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
+          output="Test" #$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
           echo $output
           #  echo "output=$(python  ${{ github.action_path }}/parser.py $INPUT_RESULTS 2>&1)" >> "$GITHUB_OUTPUT"
 
