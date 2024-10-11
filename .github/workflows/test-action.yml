@@ -24,7 +24,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           fallback-destination: "#alerts-devops"
           results: |
-           "Project Validation:success ReSharper Inspections:failure Deploy Dev:neither"
+            Project Validation:success
+            ReSharper Inspections:failure
+            Deploy Dev:neither
 
       - name: Print Status
         run: echo output from slackbot '${{ steps.trigger-slackbot-channel-test.outputs.validate-output }}'
