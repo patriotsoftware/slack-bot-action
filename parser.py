@@ -10,7 +10,7 @@ def newResultLine(jobresult):
         case _:
             return f"❕ {jobresult.split(':')[0]} Didn't Run. \n"
            
-def format_results(inputString):
+def format_results():
    # jobresult_list = inputString.splitlines()
    # formatted_list = [newResultLine(result) for result in inputString.splitlines()]
     #return ''.join(formatted_list)
