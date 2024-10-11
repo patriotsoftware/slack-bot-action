@@ -15,6 +15,5 @@ def format_results(inputString):
   formatted_list = [newResultLine(result) for result in inputString.splitlines()]
   return ''.join(formatted_list)
 
-print(sys.argv[1])
-#format_results(sys.argv[1])
+format_results(sys.argv[1])
 
