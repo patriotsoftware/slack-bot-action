@@ -15,7 +15,7 @@ def format_results():
    # formatted_list = [newResultLine(result) for result in inputString.splitlines()]
     #return ''.join(formatted_list)
     #return jobresult_list
-    return "Test successful"
+    print("Test successful")
 
 format_results()
 
