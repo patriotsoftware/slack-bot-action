@@ -72,7 +72,9 @@ runs:
           fi
 
       - shell: bash
-        run: echo "${{ steps.parse_result.outputs.text }}"
+        run: |
+          echo "${{ steps.parse_result.outputs.text }}"
+          echo "${{ steps.parse_result.outputs.destination }}"
 
       - name: Post to a Slack channel
         id: slack
