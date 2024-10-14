@@ -76,6 +76,18 @@ runs:
           echo "${{ steps.parse_result.outputs.text }}"
           echo "${{ steps.parse_result.outputs.destination }}"
 
+      - name: Find Slack user
+        id: find-slack-user
+        uses: scribd/find-slack-user-action@v1
+        with:
+          slack-token: ${{ secrets.SLACK_API_TOKEN }}
+
+      - name: Print Slack user
+        run: |
+          echo "${{ steps.find-slack-user.outputs.username }}"
+          echo "${{ steps.find-slack-user.outputs.default-member-id }}"
+          
+
       - name: Post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.27.0
