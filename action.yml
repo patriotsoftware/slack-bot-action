@@ -103,7 +103,7 @@ runs:
           INPUT_MESSAGE: ${{ inputs.message }}
           INPUT_REMOVE-BRANCH-PREFIX: ${{ inputs.remove-branch-prefix }}
           INPUT_RESULTS: ${{ inputs.results }}
-          INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
+          SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
         with:
           # Slack channel id, channel name, or user id to post message.
           # See also: https://api.slack.com/methods/chat.postMessage#channels
@@ -111,8 +111,6 @@ runs:
           channel-id: "${{ steps.find-slack-user.outputs.member-id }}"
           # For posting a simple plain text message
           slack-message: "$INPUT_MESSAGE\n${{ steps.parse_result.outputs.results }}" #"GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-        env:
-          SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
 
  # - name: Download Slackbot release
     #   uses: robinraju/release-downloader@v1
