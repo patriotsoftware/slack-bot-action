@@ -80,7 +80,7 @@ runs:
         id: find-slack-user
         uses: scribd/find-slack-user-action@v1
         with:
-          slack-token: ${{ secrets.SLACK_API_TOKEN }}
+          slack-token: ${{ inputs.slack-token }}
 
       - name: Print Slack user
         run: |
