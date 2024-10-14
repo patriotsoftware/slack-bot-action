@@ -68,9 +68,9 @@ runs:
             echo "destination=$INPUT_FALLBACK-DESTINATION" >> $GITHUB_OUTPUT
           fi
 
-        - shell: bash
-          run: "${{ steps.parse_result.outputs.results }}"
-          
+      - shell: bash
+        run: "${{ steps.parse_result.outputs.results }}"
+
       # - name: Post to a Slack channel
       #   id: slack
       #   uses: slackapi/slack-github-action@v1.27.0
