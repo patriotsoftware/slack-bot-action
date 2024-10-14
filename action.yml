@@ -71,10 +71,10 @@ runs:
             echo "destination=$INPUT_FALLBACK-DESTINATION" >> $GITHUB_OUTPUT
           fi
 
-      - shell: bash
-        run: |
-          echo "${{ steps.parse_result.outputs.text }}"
-          echo "${{ steps.parse_result.outputs.destination }}"
+      # - shell: bash
+      #   run: |
+      #     echo "${{ steps.parse_result.outputs.text }}"
+      #     echo "${{ steps.parse_result.outputs.destination }}"
 
       - name: Find Slack user
         id: find-slack-user
