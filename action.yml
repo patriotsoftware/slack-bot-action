@@ -55,12 +55,10 @@ runs:
           INPUT_RESULTS: ${{ inputs.results }}
           INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
         run: |
-          echo "$INPUT_MESSAGE"
-          echo "message=$INPUT_MESSAGE" >> $GITHUB_OUTPUT
           parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "text<<$EOF" >> $GITHUB_OUTPUT
-          echo "$parsed_results" >> $GITHUB_OUTPUT
+          echo "$INPUT_MESSAGE /n $parsed_results" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
           if [[ "$INPUT_DESTINATION" == "#"* ]]; then
@@ -112,7 +110,7 @@ runs:
           # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
           channel-id: "${{ steps.find-slack-user.outputs.member-id }}"
           # For posting a simple plain text message
-          slack-message: "${{ steps.parse_result.outputs.message }}" # \n${{ steps.parse_result.outputs.results }}" #"GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+          slack-message: "${{ steps.parse_result.outputs.results }}" # \n${{ steps.parse_result.outputs.results }}" #"GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
 
  # - name: Download Slackbot release
     #   uses: robinraju/release-downloader@v1
