@@ -56,7 +56,8 @@ runs:
           INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
         run: |
           parsed_results=$(python parser.py "$INPUT_RESULTS")
-          echo "pretty_results=$parsed_results" >> $GITHUB_OUTPUT
+          message=$(echo $parsed_results | tr '\n' ' ')
+          echo "text=$message" >> $GITHUB_OUTPUT
       #     echo "results=$parsed_results" >> $GITHUB_OUTPUT
 
       #     if [[ "$INPUT_DESTINATION" == "#"* ]]; then
@@ -70,7 +71,7 @@ runs:
       #     fi
 
       - shell: bash
-        run: "${{ steps.parse_result.outputs.pretty_results }}"
+        run: "${{ steps.parse_result.outputs.message }}"
 
       # - name: Post to a Slack channel
       #   id: slack
