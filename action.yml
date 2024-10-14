@@ -64,8 +64,9 @@ runs:
           INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
         run: |
           output=$(python parser.py "$INPUT_RESULTS")
-          echo $output
-          
+          echo "$output"
+          echo "committer is ${{ github.event.pusher.email }}"
+
           if [[ "$destination" == "#"* ]]; then
             echo "1"
             echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
@@ -76,6 +77,7 @@ runs:
             echo "3"
             echo "destination=$INPUT_FALLBACK" >> $GITHUB_OUTPUT
           fi
+          
       - name: Output variables
         shell: bash
         run: echo ${{ steps.parse_result.outputs.destination }}
