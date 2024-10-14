@@ -93,7 +93,17 @@ runs:
 
       - name: Post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.27.0
+        uses: slackapi/slack-github-action@v1.27.0        
+        env:
+          INPUT_DESTINATION: ${{ inputs.destination }}
+          INPUT_FALLBACK-DESTINATION: ${{ inputs.fallback-destination }}
+          INPUT_GITHUB-REPOSITORY: ${{ github.repository }}
+          INPUT_GITHUB-SHA: ${{ github.sha }}
+          INPUT_GITHUB-TOKEN: ${{ github.token }}
+          INPUT_MESSAGE: ${{ inputs.message }}
+          INPUT_REMOVE-BRANCH-PREFIX: ${{ inputs.remove-branch-prefix }}
+          INPUT_RESULTS: ${{ inputs.results }}
+          INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
         with:
           # Slack channel id, channel name, or user id to post message.
           # See also: https://api.slack.com/methods/chat.postMessage#channels
