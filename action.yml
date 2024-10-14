@@ -68,18 +68,21 @@ runs:
             echo "destination=$INPUT_FALLBACK-DESTINATION" >> $GITHUB_OUTPUT
           fi
 
-      - name: Post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v1.27.0
-        with:
-          # Slack channel id, channel name, or user id to post message.
-          # See also: https://api.slack.com/methods/chat.postMessage#channels
-          # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
-          channel-id: ${{ steps.parse_result.outputs.destination }}
-          # For posting a simple plain text message
-          slack-message: "$INPUT_MESSAGE\n${{ steps.parse_result.outputs.results }}" #"GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-        env:
-          SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
+        - shell: bash
+          run: "${{ steps.parse_result.outputs.results }}"
+          
+      # - name: Post to a Slack channel
+      #   id: slack
+      #   uses: slackapi/slack-github-action@v1.27.0
+      #   with:
+      #     # Slack channel id, channel name, or user id to post message.
+      #     # See also: https://api.slack.com/methods/chat.postMessage#channels
+      #     # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
+      #     channel-id: ${{ steps.parse_result.outputs.destination }}
+      #     # For posting a simple plain text message
+      #     slack-message: "$INPUT_MESSAGE\n${{ steps.parse_result.outputs.results }}" #"GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+      #   env:
+      #     SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
 
  # - name: Download Slackbot release
     #   uses: robinraju/release-downloader@v1
