@@ -85,8 +85,10 @@ runs:
       - name: Print Slack user
         shell: bash
         run: |
+          echo "Start"
           echo "${{ steps.find-slack-user.outputs.username }}"
           echo "${{ steps.find-slack-user.outputs.default-member-id }}"
+          echo "finish"
           
 
       - name: Post to a Slack channel
