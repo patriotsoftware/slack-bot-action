@@ -83,6 +83,7 @@ runs:
           slack-token: ${{ inputs.slack-token }}
 
       - name: Print Slack user
+        shell: bash
         run: |
           echo "${{ steps.find-slack-user.outputs.username }}"
           echo "${{ steps.find-slack-user.outputs.default-member-id }}"
