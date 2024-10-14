@@ -11,11 +11,11 @@ def newResultLine(jobresult):
             return f"❕ {jobresult.split(':')[0]} Didn't Run. \n"
            
 def format_results(inputString):
-    #print(inputString)
     jobresult_list = inputString.splitlines()
     formatted_list = [newResultLine(result) for result in inputString.splitlines()]
     print (''.join(formatted_list))
 
-format_results(sys.argv[1])
+if __name__ == "__main__":
+    format_results(sys.argv[1])
 
 
