@@ -55,8 +55,6 @@ runs:
           INPUT_RESULTS: ${{ inputs.results }}
           INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
         run: |
-          echo "$INPUT_MESSAGE"
-          echo "message=$INPUT_MESSAGE" >> $GITHUB_OUTPUT
           parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "text<<$EOF" >> $GITHUB_OUTPUT
