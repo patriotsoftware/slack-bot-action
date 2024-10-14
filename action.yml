@@ -43,12 +43,12 @@ runs:
         uses: actions/checkout@v4
 
 
-      - uses: octokit/request-action@v2.x
-        id: get_commit_email
-        with:
-          route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }} 
+      # - uses: octokit/request-action@v2.x
+      #   id: get_commit_email
+      #   with:
+      #     route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }} 
       
       - shell: bash
         id: parse_result
@@ -66,13 +66,17 @@ runs:
          # echo "parse-results=$(python parser.py "$INPUT_RESULTS")\n" >> $GITHUB_OUTPUT
 
           if [[ "$destination" == "#"* ]]; then
+            echo "1"
             echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
           elif [[ "$destination" == "committer" && ${{ github.event.pusher.email }} == *".patriotsoftware.com" ]]; then
+            echo "2"
             echo "destination=${{ github.event.pusher.email }}" >> $GITHUB_OUTPUT
           else 
+            "3"
             echo "destination=$INPUT_FALLBACK" >> $GITHUB_OUTPUT
           fi
-      - shell: bash
+      - name: Output variables
+        shell: bash
         run: echo ${{ steps.parse_result.outputs.destination }}
 
       # - name: Post to a Slack channel
