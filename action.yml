@@ -71,7 +71,7 @@ runs:
       #     fi
 
       - shell: bash
-        run: "${{ steps.parse_result.outputs.message }}"
+        run: "${{ steps.parse_result.outputs.text }}"
 
       # - name: Post to a Slack channel
       #   id: slack
