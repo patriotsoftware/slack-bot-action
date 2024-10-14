@@ -56,7 +56,7 @@ runs:
           INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
         run: |
           parsed_results=$(python parser.py "$INPUT_RESULTS")
-          echo $parsed_results
+          echo "$parsed_results"
       #     echo "results=$parsed_results" >> $GITHUB_OUTPUT
 
       #     if [[ "$INPUT_DESTINATION" == "#"* ]]; then
