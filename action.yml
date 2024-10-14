@@ -56,20 +56,21 @@ runs:
           INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
         run: |
           parsed_results=$(python parser.py "$INPUT_RESULTS")
-          echo "results=$parsed_results" >> $GITHUB_OUTPUT
+          echo $parsed_results
+      #     echo "results=$parsed_results" >> $GITHUB_OUTPUT
 
-          if [[ "$INPUT_DESTINATION" == "#"* ]]; then
-            echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then
-            echo "destination=${{ github.event.pusher.email }}" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_FALLBACK-DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then  
-            echo "destination=${{ github.event.pusher.email }}" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_FALLBACK-DESTINATION" == "#"* ]]; then
-            echo "destination=$INPUT_FALLBACK-DESTINATION" >> $GITHUB_OUTPUT
-          fi
+      #     if [[ "$INPUT_DESTINATION" == "#"* ]]; then
+      #       echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
+      #     elif [[ "$INPUT_DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then
+      #       echo "destination=${{ github.event.pusher.email }}" >> $GITHUB_OUTPUT
+      #     elif [[ "$INPUT_FALLBACK-DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then  
+      #       echo "destination=${{ github.event.pusher.email }}" >> $GITHUB_OUTPUT
+      #     elif [[ "$INPUT_FALLBACK-DESTINATION" == "#"* ]]; then
+      #       echo "destination=$INPUT_FALLBACK-DESTINATION" >> $GITHUB_OUTPUT
+      #     fi
 
-      - shell: bash
-        run: "${{ steps.parse_result.outputs.results }}"
+      # - shell: bash
+      #   run: "${{ steps.parse_result.outputs.results }}"
 
       # - name: Post to a Slack channel
       #   id: slack
