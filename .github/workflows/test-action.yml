@@ -18,7 +18,7 @@ jobs:
         id: trigger-slackbot-channel-test
         uses: patriotsoftware/slack-bot-action@use-official-action
         with:
-          destination: "#aws-alerts"
+          destination: "jarcher@patriotsoftware.com"
           message: "A new slackbot update has been triggered."
           slack-token: ${{ secrets.SLACK_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}

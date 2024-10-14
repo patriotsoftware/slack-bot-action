@@ -55,7 +55,8 @@ runs:
           INPUT_RESULTS: ${{ inputs.results }}
           INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
         run: |
-          output=$(python parser.py "$INPUT_RESULTS")
+          parsed_results=$(python parser.py "$INPUT_RESULTS")
+          echo "results=$parsed_results" >> $GITHUB_OUTPUT
 
           if [[ "$INPUT_DESTINATION" == "#"* ]]; then
             echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
@@ -76,7 +77,7 @@ runs:
           # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
           channel-id: ${{ steps.parse_result.outputs.destination }}
           # For posting a simple plain text message
-          slack-message: $INPUT_MESSAGE\n${{ steps.parse_result.outputs.destination }} #"GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+          slack-message: "$INPUT_MESSAGE\n${{ steps.parse_result.outputs.results }}" #"GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
         env:
           SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
 
