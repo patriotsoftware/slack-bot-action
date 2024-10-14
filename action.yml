@@ -72,7 +72,8 @@ runs:
           else 
             echo "destination=$INPUT_FALLBACK" >> $GITHUB_OUTPUT
           fi
-      - run: echo ${{ steps.parse_result.outputs.destination }}
+      - shell: bash
+        run: echo ${{ steps.parse_result.outputs.destination }}
 
       # - name: Post to a Slack channel
       #   id: slack
