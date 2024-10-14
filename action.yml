@@ -41,14 +41,6 @@ runs:
   steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-
-      # - uses: octokit/request-action@v2.x
-      #   id: get_commit_email
-      #   with:
-      #     route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ github.token }} 
       
       - shell: bash
         id: parse_result
@@ -64,37 +56,29 @@ runs:
           INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
         run: |
           output=$(python parser.py "$INPUT_RESULTS")
-          echo "$output"
-          echo "destination is $INPUT_DESTINATION"
-          echo "committer is ${{ github.event.pusher.email }}"
 
           if [[ "$INPUT_DESTINATION" == "#"* ]]; then
-            echo "1"
             echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then
-            echo "2"
             echo "destination=${{ github.event.pusher.email }}" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_FALLBACK-DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then  
-            echo "3"
             echo "destination=${{ github.event.pusher.email }}" >> $GITHUB_OUTPUT
+          elif [[ "$INPUT_FALLBACK-DESTINATION" == "#"* ]]; then
+            echo "destination=$INPUT_FALLBACK-DESTINATION" >> $GITHUB_OUTPUT
           fi
 
-      - name: Output variables
-        shell: bash
-        run: echo ${{ steps.parse_result.outputs.destination }}
-
-      # - name: Post to a Slack channel
-      #   id: slack
-      #   uses: slackapi/slack-github-action@v1.27.0
-      #   with:
-      #     # Slack channel id, channel name, or user id to post message.
-      #     # See also: https://api.slack.com/methods/chat.postMessage#channels
-      #     # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
-      #     channel-id: '#aws-alerts'
-      #     # For posting a simple plain text message
-      #     slack-message: ${{ steps.parse_result.outputs.output }} #"GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
+      - name: Post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          # Slack channel id, channel name, or user id to post message.
+          # See also: https://api.slack.com/methods/chat.postMessage#channels
+          # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
+          channel-id: ${{ steps.parse_result.outputs.destination }}
+          # For posting a simple plain text message
+          slack-message: $INPUT_MESSAGE\n${{ steps.parse_result.outputs.destination }} #"GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
 
  # - name: Download Slackbot release
     #   uses: robinraju/release-downloader@v1
