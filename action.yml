@@ -74,9 +74,9 @@ runs:
           elif [[ "$INPUT_DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then
             echo "2"
             echo "destination=${{ github.event.pusher.email }}" >> $GITHUB_OUTPUT
-          else 
+          elif [[ "$INPUT_FALLBACK-DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then  
             echo "3"
-            echo "destination=$INPUT_FALLBACK" >> $GITHUB_OUTPUT
+            echo "destination=${{ github.event.pusher.email }}" >> $GITHUB_OUTPUT
           fi
 
       - name: Output variables
