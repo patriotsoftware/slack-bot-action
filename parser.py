@@ -1,7 +1,6 @@
 import sys
 
-def newResultLine(jobresult):
-    
+def newResultLine(jobresult):   
     match(jobresult.split(':')[1]):
         case "success":
             return f"✅ {jobresult.split(':')[0]} Succeeded.\n"
@@ -15,7 +14,6 @@ def format_results(inputString):
     formatted_list = [newResultLine(result) for result in inputString.splitlines()]
     print (''.join(formatted_list))
 
-if __name__ == "__main__":
-    format_results(sys.argv[1])
+format_results(sys.argv[1])
 
 

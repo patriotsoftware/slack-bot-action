@@ -22,7 +22,7 @@ jobs:
           message: "A new slackbot update has been triggered."
           slack-token: ${{ secrets.SLACK_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          fallback-destination: "#alerts-devops"
+          fallback-destination: "#aws-alerts"
           results: |
             Project Validation:success
             ReSharper Inspections:failure
