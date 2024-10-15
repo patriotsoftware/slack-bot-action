@@ -41,7 +41,13 @@ runs:
   steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      
+
+      - name: Find Slack user
+        id: find-slack-user
+        uses: scribd/find-slack-user-action@v1
+        with:
+          slack-token: ${{ inputs.slack-token }}
+
       - shell: bash
         id: parse_result
         env:
@@ -61,36 +67,26 @@ runs:
           echo "$parsed_results" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
+          committer_id="${{ steps.parse_result.outputs.destination }}"
+
           if [[ "$INPUT_DESTINATION" == "#"* ]]; then
             echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then
-            echo "destination=${{ github.event.pusher.email }}" >> $GITHUB_OUTPUT
+            echo "destination=$committer_id" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_FALLBACK-DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then  
-            echo "destination=${{ github.event.pusher.email }}" >> $GITHUB_OUTPUT
+            echo "destination=$committer_id" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_FALLBACK-DESTINATION" == "#"* ]]; then
             echo "destination=$INPUT_FALLBACK-DESTINATION" >> $GITHUB_OUTPUT
           fi
-
-      # - shell: bash
-      #   run: |
-      #     echo "${{ steps.parse_result.outputs.text }}"
-      #     echo "${{ steps.parse_result.outputs.destination }}"
-
-      - name: Find Slack user
-        id: find-slack-user
-        uses: scribd/find-slack-user-action@v1
-        with:
-          slack-token: ${{ inputs.slack-token }}
 
       - name: Print Slack user
         shell: bash
         run: |
           echo "Start"
-          echo "${{ steps.find-slack-user.outputs.username }}"
+          echo "${{ steps.parse_result.outputs.member-id }}"
           echo "${{ steps.find-slack-user.outputs.member-id }}"
           echo "finish"
           
-
       - name: Post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.27.0        
@@ -108,9 +104,9 @@ runs:
           # Slack channel id, channel name, or user id to post message.
           # See also: https://api.slack.com/methods/chat.postMessage#channels
           # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
-          channel-id: "${{ steps.find-slack-user.outputs.member-id }}"
+          channel-id: "${{ steps.parse_result.outputs.member-id }}"
           # For posting a simple plain text message
-          slack-message: "$INPUT_MESSAGE" 
+          slack-message: "${{ steps.parse_result.outputs.parsed_results }}"
           # \n${{ steps.parse_result.outputs.results }}" #"GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
 
  # - name: Download Slackbot release
