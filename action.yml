@@ -65,9 +65,9 @@ runs:
 
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "text<<$EOF" >> $GITHUB_OUTPUT
-          echo -en '\e[1;30m' >> $GITHUB_OUTPUT
+          echo -e "\033[0" >> $GITHUB_OUTPUT
           echo "$INPUT_MESSAGE" >> $GITHUB_OUTPUT
-          echo -en '\e[0;30m' >> $GITHUB_OUTPUT
+          echo -e "\033[0" >> $GITHUB_OUTPUT
           echo "$parsed_results" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
