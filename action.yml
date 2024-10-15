@@ -65,7 +65,7 @@ runs:
 
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "text<<$EOF" >> $GITHUB_OUTPUT
-          echo "# $INPUT_MESSAGE" >> $GITHUB_OUTPUT
+          echo $INPUT_MESSAGE" >> $GITHUB_OUTPUT
           echo "$parsed_results" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
@@ -109,7 +109,7 @@ runs:
           # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
           channel-id: "${{ steps.parse_result.outputs.destination }}"
           # For posting a simple plain text message
-          slack-message: "${{ steps.parse_result.outputs.text }}"
+          slack-message: "## ${{ steps.parse_result.outputs.text }}"
           # \n${{ steps.parse_result.outputs.results }}" #"GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
 
  # - name: Download Slackbot release
