@@ -64,6 +64,7 @@ runs:
           parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "text<<$EOF" >> $GITHUB_OUTPUT
+          echo "$INPUT_MESSAGE" >> $GITHUB_OUTPUT
           echo "$parsed_results" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
