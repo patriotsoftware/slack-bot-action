@@ -73,12 +73,16 @@ runs:
 
           if [[ "$INPUT_DESTINATION" == "#"* ]]; then
             echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
+            echo "1"
           elif [[ "$INPUT_DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then
             echo "destination=$committer_id" >> $GITHUB_OUTPUT
+            echo "2"
           elif [[ "$INPUT_FALLBACK-DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then  
             echo "destination=$committer_id" >> $GITHUB_OUTPUT
+            echo "3"
           elif [[ "$INPUT_FALLBACK-DESTINATION" == "#"* ]]; then
             echo "destination=$INPUT_FALLBACK-DESTINATION" >> $GITHUB_OUTPUT
+            echo "4"
           fi
 
       - name: Print Slack user
