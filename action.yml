@@ -85,6 +85,7 @@ runs:
           echo "Start"
           echo "${{ steps.parse_result.outputs.destination }}"
           echo "${{ steps.find-slack-user.outputs.member-id }}"
+          echo "${{ steps.parse_result.outputs.parsed_results }}"
           echo "finish"
           
       - name: Post to a Slack channel
