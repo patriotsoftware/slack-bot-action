@@ -62,7 +62,7 @@ runs:
           INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
         run: |
           parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
-          input_bold="### $INPUT_MESSAGE"
+          input_bold="\033[1m $INPUT_MESSAGE \033[0m" 
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "text<<$EOF" >> $GITHUB_OUTPUT
           echo "$input_bold" >> $GITHUB_OUTPUT
