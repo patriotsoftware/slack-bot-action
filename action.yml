@@ -66,7 +66,7 @@ runs:
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "text<<$EOF" >> $GITHUB_OUTPUT
           echo "$(tput bold)$INPUT_MESSAGE" >> $GITHUB_OUTPUT
-          echo "${normal}$parsed_results" >> $GITHUB_OUTPUT
+          echo "$parsed_results" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
           committer_id="${{ steps.parse_result.outputs.destination }}"
