@@ -62,10 +62,13 @@ runs:
           INPUT_SLACK-TOKEN: ${{ inputs.slack-token }}
         run: |
           parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
+          bold=$(tput bold)
+          normal=$(tput sgr0)
+
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "text<<$EOF" >> $GITHUB_OUTPUT
-          echo "$INPUT_MESSAGE" >> $GITHUB_OUTPUT
-          echo "$parsed_results" >> $GITHUB_OUTPUT
+          echo "${bold}$INPUT_MESSAGE" >> $GITHUB_OUTPUT
+          echo "${normal}$parsed_results" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
           committer_id="${{ steps.parse_result.outputs.destination }}"
