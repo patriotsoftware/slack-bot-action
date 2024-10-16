@@ -46,10 +46,18 @@ runs:
         # the slack github action doesn't support user emails directly
         # use this method to get the user's slack memberid from the email 
         # it uses the github email of the last commit to find this info
+      - uses: octokit/request-action@v2.x
+        id: get_commit_email
+        with:
+          route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        
       - name: Find Slack user
         id: find-slack-user
         uses: scribd/find-slack-user-action@v1
         with:
+          email: ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}
           slack-token: ${{ inputs.slack-token }}
 
       - shell: bash
