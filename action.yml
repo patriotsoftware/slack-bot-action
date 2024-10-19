@@ -83,12 +83,16 @@ runs:
           echo "$EOF" >> $GITHUB_OUTPUT
 
           if [[ "$INPUT_DESTINATION" == "#"* ]]; then
+            echo "Going to main destination channel"
             echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then
+            echo "Going to main committer"
             echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then  
+            echo "Going to fallback committer"
             echo "destination=$${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
+            echo "Going to fallback channel"
             echo "destination=$INPUT_FALLBACK_DESTINATION" >> $GITHUB_OUTPUT
           fi
 
