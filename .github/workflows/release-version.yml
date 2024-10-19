@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - test-version
 
 permissions:
   contents: write
@@ -15,23 +14,10 @@ jobs:
     name: Release new version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: 'Get Previous tag'
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        with:
-          fallback: 1.0.36 # Optional fallback tag to use when no tag can be found
-          #workingDirectory: another/path/where/a/git/repo/is/checked/out # Optional alternative working directory
-      - name: 'Get next minor version'
-        id: semvers
-        uses: "WyriHaximus/github-action-next-semvers@v1"
-        with:
-          version: ${{ steps.previoustag.outputs.tag }}
 
-      - run: |
-            echo ${{ steps.previoustag.outputs.tag }}            
-            echo ${{ steps.semvers.outputs.patch }}
-            
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+
       - uses: actions-ecosystem/action-bump-semver@v1
         id: bump-semver
         with:
