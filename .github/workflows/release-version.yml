@@ -15,30 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+
+      - uses: actions-ecosystem/action-bump-semver@v1
+        id: bump-semver
         with:
-          fetch-depth: 0
+          current_version: ${{ steps.get-latest-tag.outputs.tag }}
+          level: minor
 
-      - name: Bump Version
-        id: bump-version
-        uses: patriotsoftware/semver-bump-action@v1
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - uses: actions-ecosystem/action-push-tag@v1
         with:
-          go-version: stable
-
-      - name: Build Binary
-        run: |
-          go build \
-            -ldflags "-s -w -extldflags '-static'" \
-            -o slackbot \
-            . \
-            && strip slackbot \
-            && upx -q -9 slackbot
-
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          make_latest: true
-          tag_name: ${{ steps.bump-version.outputs.resulting-semver-tag }}
-          files: slackbot
+          tag: ${{ steps.bump-semver.outputs.new_version }}
+          message: '${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
