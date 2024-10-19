@@ -19,8 +19,8 @@ jobs:
       - name: 'Get Previous tag'
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        # with:
-        #   fallback: 1.0.0 # Optional fallback tag to use when no tag can be found
+        with:
+          fallback: 1.0.36 # Optional fallback tag to use when no tag can be found
           #workingDirectory: another/path/where/a/git/repo/is/checked/out # Optional alternative working directory
       - name: 'Get next minor version'
         id: semvers
@@ -29,16 +29,16 @@ jobs:
           version: ${{ steps.previoustag.outputs.tag }}
 
       - run: |
-            echo ${{ steps.previoustag.outputs.tag }}
-            
+            echo ${{ steps.previoustag.outputs.tag }}            
             echo ${{ steps.semvers.outputs.patch }}
-      # - uses: actions-ecosystem/action-bump-semver@v1
-      #   id: bump-semver
-      #   with:
-      #     current_version: ${{ steps.get-latest-tag.outputs.tag }}
-      #     level: minor
+            
+      - uses: actions-ecosystem/action-bump-semver@v1
+        id: bump-semver
+        with:
+          current_version: ${{ steps.get-latest-tag.outputs.tag }}
+          level: minor
 
-      # - uses: actions-ecosystem/action-push-tag@v1
-      #   with:
-      #     tag: ${{ steps.bump-semver.outputs.new_version }}
-      #     message: '${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
+      - uses: actions-ecosystem/action-push-tag@v1
+        with:
+          tag: ${{ steps.bump-semver.outputs.new_version }}
+          message: '${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
