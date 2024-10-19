@@ -65,13 +65,13 @@ runs:
         id: parse_result
         env:
           INPUT_DESTINATION: ${{ inputs.destination }}
-          INPUT_FALLBACK-DESTINATION: ${{ inputs.fallback-destination }}
+          INPUT_FALLBACK_DESTINATION: ${{ inputs.fallback-destination }}
           INPUT_MESSAGE: ${{ inputs.message }}
           INPUT_RESULTS: ${{ inputs.results }}
         run: |
           # Make the results look nice
           echo "Input Destination is $INPUT_DESTINATION"
-          echo "Fallback Destination is $INPUT_FALLBACK-DESTINATION"
+          echo "Fallback Destination is $INPUT_FALLBACK_DESTINATION"
           parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
 
           # github actions doesn't support just passing multiline strings between steps
@@ -86,10 +86,10 @@ runs:
             echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then
             echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_FALLBACK-DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then  
+          elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" && "${{ github.event.pusher.email }}" == *"@patriotsoftware.com" ]]; then  
             echo "destination=$${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_FALLBACK-DESTINATION" == "#"* ]]; then
-            echo "destination=$INPUT_FALLBACK-DESTINATION" >> $GITHUB_OUTPUT
+          elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
+            echo "destination=$INPUT_FALLBACK_DESTINATION" >> $GITHUB_OUTPUT
           fi
 
       - shell: bash
