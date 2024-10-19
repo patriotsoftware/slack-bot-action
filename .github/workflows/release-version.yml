@@ -18,23 +18,23 @@ jobs:
         with:
           fetch-depth: 0 # Required due to the way Git works, without it this action won't be able to find any or the correct tags
    
-      # - name: Minor version for each merge
-      #   id: taggerDryRun
-      #   uses: anothrNick/github-tag-action@1.36.0
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     WITH_V: true
-      #     DRY_RUN: true
+      - name: Minor version for each merge
+        id: taggerDryRun
+        uses: anothrNick/github-tag-action@1.36.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          DRY_RUN: true
   
-      # - name: echo new tag
-      #   run: |
-      #     echo "The next tag version will be: ${{ steps.taggerDryRun.outputs.new_tag }}"
-      # - name: echo tag
-      #   run: |
-      #     echo "The current tag is: ${{ steps.taggerDryRun.outputs.tag }}"
-      # - name: echo part
-      #   run: |
-      #     echo "The version increment was: ${{ steps.taggerDryRun.outputs.part }}"
+      - name: echo new tag
+        run: |
+          echo "The next tag version will be: ${{ steps.taggerDryRun.outputs.new_tag }}"
+      - name: echo tag
+        run: |
+          echo "The current tag is: ${{ steps.taggerDryRun.outputs.tag }}"
+      - name: echo part
+        run: |
+          echo "The version increment was: ${{ steps.taggerDryRun.outputs.part }}"
     
       - name: Minor version for each merge
         id: taggerFinal
@@ -42,3 +42,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
+
+      - uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps.taggerFinal.outputs.new_tag}}
+          release_name: ${{ steps.taggerFinal.outputs.new_tag}}
+          draft: false
+          prerelease: false
