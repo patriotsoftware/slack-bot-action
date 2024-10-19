@@ -29,9 +29,9 @@ jobs:
           version: ${{ steps.previoustag.outputs.tag }}
 
       - run: |
-            ${{ steps.previoustag.outputs.tag }}
+            echo ${{ steps.previoustag.outputs.tag }}
             
-            ${{ steps.semvers.outputs.patch }}
+            echo ${{ steps.semvers.outputs.patch }}
       # - uses: actions-ecosystem/action-bump-semver@v1
       #   id: bump-semver
       #   with:
