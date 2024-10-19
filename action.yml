@@ -72,6 +72,7 @@ runs:
           # Make the results look nice
           echo "Input Destination is $INPUT_DESTINATION"
           echo "Fallback Destination is $INPUT_FALLBACK_DESTINATION"
+          echo "Email is ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}"
           parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
 
           # github actions doesn't support just passing multiline strings between steps
