@@ -70,8 +70,8 @@ runs:
           INPUT_RESULTS: ${{ inputs.results }}
         run: |
           # Make the results look nice
-          echo "Input Destination is ${{ inputs.destination }}"
-          echo "Fallback Destination is ${{ inputs.fallback-destination }}"
+          echo "Input Destination is $INPUT_DESTINATION"
+          echo "Fallback Destination is $INPUT_FALLBACK-DESTINATION"
           parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
 
           # github actions doesn't support just passing multiline strings between steps
