@@ -90,6 +90,8 @@ runs:
             echo "destination=$INPUT_FALLBACK-DESTINATION" >> $GITHUB_OUTPUT
           fi
 
+      - run: echo "${{ steps.parse_result.outputs.destination }}"
+
       - name: Post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.27        
