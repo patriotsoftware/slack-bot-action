@@ -21,9 +21,9 @@ jobs:
       - id: get-current-version
         run: |
               # major contains the 'v'
-              echo "major=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 1)\n" >> $GITHUB_OUTPUT
-              echo "minor=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 2)\n" >> $GITHUB_OUTPUT
-              echo "patch=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 3)\n" >> $GITHUB_OUTPUT
+              echo "major=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
+              echo "minor=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 2)" >> $GITHUB_OUTPUT
+              echo "patch=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 3)" >> $GITHUB_OUTPUT
 
       - id: update-minor-version
         run:
@@ -31,6 +31,7 @@ jobs:
           
       - id: update-current-version
         run: |
+            echo ${{steps.update-minor-version.outputs.updated-version}}
             git config user.name "${GITHUB_ACTOR}"
             git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
