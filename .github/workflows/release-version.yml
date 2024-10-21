@@ -45,16 +45,9 @@ jobs:
 
       - name: Update major version tag
         run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
           currentMajorTag=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 1)
           git tag -fa currentMajorTag
           git push -f --tags
           
-          
-      - uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ steps.taggerFinal.outputs.new_tag}}
-          release_name: ${{ steps.taggerFinal.outputs.new_tag}}
-          draft: false
-          prerelease: false
