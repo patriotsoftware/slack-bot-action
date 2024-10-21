@@ -35,8 +35,8 @@ jobs:
             git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
             echo "Updating Minor Version"
-            git tag -fa "${{steps.get-current-version.outputs.updated-version}}" -m "Minor Version Update"
-            git push --force origin "${{steps.get-current-version.outputs.updated-version}}"            
+            git tag -fa "${{steps.update-minor-version.outputs.updated-version}}" -m "Minor Version Update"
+            git push --force origin "${{steps.update-minor-version.outputs.updated-version}}"            
 
             echo "Retagging Major Version
             git tag -fa "${{steps.get-current-version.outputs.major}}" -m "Major Version Retag"
