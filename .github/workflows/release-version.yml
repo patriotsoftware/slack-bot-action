@@ -17,37 +17,26 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Required due to the way Git works, without it this action won't be able to find any or the correct tags
-   
-      - name: Minor version for each merge
-        id: taggerDryRun
-        uses: anothrNick/github-tag-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
-          DRY_RUN: true
-  
-      - name: echo new tag
-        run: |
-          echo "The next tag version will be: ${{ steps.taggerDryRun.outputs.new_tag }}"
-      - name: echo tag
-        run: |
-          echo "The current tag is: ${{ steps.taggerDryRun.outputs.tag }}"
-      - name: echo part
-        run: |
-          echo "The version increment was: ${{ steps.taggerDryRun.outputs.part }}"
-    
-      - name: Minor version for each merge
-        id: taggerFinal
-        uses: anothrNick/github-tag-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
 
-      - name: Update major version tag
+      - id: get-current-version
         run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
-          currentMajorTag=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 1)
-          git tag -fa currentMajorTag
-          git push -f --tags
+              echo "major=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 1)\n" >> $GITHUB_OUTPUT
+              echo "minor=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 2)\n" >> $GITHUB_OUTPUT
+              echo "patch=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 3)\n" >> $GITHUB_OUTPUT
+
+      - id: update-minor-version
+        run:
+          echo "updated-version=${{needs.get-current-version.outputs.major}}.${{needs.get-current-version.outputs.minor}}+1.${{needs.get-current-version.outputs.patch}}" >> $GITHUB_OUTPUT
           
+      - id: update-current-version
+        run: |
+            git config user.name "${GITHUB_ACTOR}"
+            git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+            echo "Updating Minor Version"
+            git tag -fa "${{needs.update-current-version.outputs.updated-version}}" -m "Minor Version Update"
+            git push --force origin "${{needs.update-current-version.outputs.updated-version}}"            
+
+            echo "Retagging Major Version
+            git tag -fa "${{needs.get-current-version.outputs.major}}" -m "Major Version Retag"
+            git push --force origin "${{needs.get-current-version.outputs.major}}"
