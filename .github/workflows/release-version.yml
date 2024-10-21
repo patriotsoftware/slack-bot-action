@@ -20,13 +20,14 @@ jobs:
 
       - id: get-current-version
         run: |
+              # major contains the 'v'
               echo "major=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 1)\n" >> $GITHUB_OUTPUT
               echo "minor=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 2)\n" >> $GITHUB_OUTPUT
               echo "patch=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 3)\n" >> $GITHUB_OUTPUT
 
       - id: update-minor-version
         run:
-          echo "updated-version=${{needs.get-current-version.outputs.major}}.${{needs.get-current-version.outputs.minor}}+1.${{needs.get-current-version.outputs.patch}}" >> $GITHUB_OUTPUT
+          echo "updated-version=${{steps.get-current-version.outputs.major}}.${{steps.get-current-version.outputs.minor}}+1.${{steps.get-current-version.outputs.patch}}" >> $GITHUB_OUTPUT
           
       - id: update-current-version
         run: |
@@ -34,9 +35,9 @@ jobs:
             git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
             echo "Updating Minor Version"
-            git tag -fa "${{needs.update-current-version.outputs.updated-version}}" -m "Minor Version Update"
-            git push --force origin "${{needs.update-current-version.outputs.updated-version}}"            
+            git tag -fa "${{steps.get-current-version.outputs.updated-version}}" -m "Minor Version Update"
+            git push --force origin "${{steps.get-current-version.outputs.updated-version}}"            
 
             echo "Retagging Major Version
-            git tag -fa "${{needs.get-current-version.outputs.major}}" -m "Major Version Retag"
-            git push --force origin "${{needs.get-current-version.outputs.major}}"
+            git tag -fa "${{steps.get-current-version.outputs.major}}" -m "Major Version Retag"
+            git push --force origin "${{steps.get-current-version.outputs.major}}"
