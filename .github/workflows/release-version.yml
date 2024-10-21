@@ -27,7 +27,7 @@ jobs:
               
       - id: update-minor-version
         run:
-          echo "updated-version=${{steps.get-current-version.outputs.minor}}+1
+          updated-version=${{steps.get-current-version.outputs.minor}}+1
           echo "updated-minor-version=$updated-version" >> $GITHUB_OUTPUT
           
       - id: update-current-version
