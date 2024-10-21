@@ -22,11 +22,6 @@ jobs:
         id: bump-version
         uses: patriotsoftware/semver-bump-action@v1
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: stable
-
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
