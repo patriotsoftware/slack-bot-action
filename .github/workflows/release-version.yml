@@ -24,20 +24,22 @@ jobs:
               echo "major=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
               echo "minor=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 2)" >> $GITHUB_OUTPUT
               echo "patch=$(echo $(git describe --abbrev=0 --tags) | cut -d '.' -f 3)" >> $GITHUB_OUTPUT
-
+              
       - id: update-minor-version
         run:
-          echo "updated-version=${{steps.get-current-version.outputs.major}}.${{steps.get-current-version.outputs.minor}}+1.${{steps.get-current-version.outputs.patch}}" >> $GITHUB_OUTPUT
+          echo "updated-version=${{steps.get-current-version.outputs.minor}}+1
+          echo "updated-minor-version=$updated-version" >> $GITHUB_OUTPUT
           
       - id: update-current-version
         run: |
-            echo ${{steps.update-minor-version.outputs.updated-version}}
+            echo ${{steps.update-minor-version.outputs.updated-minor-version}}
+            echo "New Version is ${{steps.get-current-version.outputs.major}}.${{steps.update-minor-version.outputs.updated-minor-version}}.${{steps.get-current-version.outputs.patch}}"
             git config user.name "${GITHUB_ACTOR}"
             git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
             echo "Updating Minor Version"
-            git tag -fa "${{steps.update-minor-version.outputs.updated-version}}" -m "Minor Version Update"
-            git push --force origin "${{steps.update-minor-version.outputs.updated-version}}"            
+            git tag -fa "${{steps.get-current-version.outputs.major}}.${{steps.update-minor-version.outputs.updated-minor-version}}.${{steps.get-current-version.outputs.patch}}" -m "Minor Version Update"
+            git push --force origin "${{steps.get-current-version.outputs.major}}.${{steps.update-minor-version.outputs.updated-minor-version}}.${{steps.get-current-version.outputs.patch}}"            
 
             echo "Retagging Major Version
             git tag -fa "${{steps.get-current-version.outputs.major}}" -m "Major Version Retag"
