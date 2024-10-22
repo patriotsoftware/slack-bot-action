@@ -58,7 +58,7 @@ runs:
         id: find-slack-user
         uses: scribd/find-slack-user-action@v1
         with:
-          email: ${{github.event.pusher.email}}
+          email: ${{github.actor}}
           slack-token: ${{ inputs.slack-token }}
 
       - shell: bash
