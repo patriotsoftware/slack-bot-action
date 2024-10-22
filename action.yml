@@ -72,7 +72,8 @@ runs:
           # Make the results look nice
           echo "Input Destination is $INPUT_DESTINATION"
           echo "Fallback Destination is $INPUT_FALLBACK_DESTINATION"
-          echo "Email is ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}"
+          echo "Email is ${{github.actor}}"
+          echo "Member id is ${{ steps.find-slack-user.outputs.member-id }}"
           parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
 
           # github actions doesn't support just passing multiline strings between steps
@@ -86,10 +87,10 @@ runs:
           if [[ "$INPUT_DESTINATION" == "#"* ]]; then
             echo "Going to main destination channel"
             echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_DESTINATION" == "committer" && "${{github.event.pusher.email}}" == *"@patriotsoftware.com" ]]; then
+          elif [[ "$INPUT_DESTINATION" == "committer" && "${{github.actor}}" == *"@patriotsoftware.com" ]]; then
             echo "Going to main committer"
             echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" && "${{github.event.pusher.email}}" == *"@patriotsoftware.com" ]]; then  
+          elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" && "${{github.actor}}" == *"@patriotsoftware.com" ]]; then  
             echo "Going to fallback committer"
             echo "destination=$${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
