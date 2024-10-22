@@ -58,7 +58,7 @@ runs:
         id: find-slack-user
         uses: scribd/find-slack-user-action@v1
         with:
-          email: ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}
+          email: jarcher@patriotsoftware.com #${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}
           slack-token: ${{ inputs.slack-token }}
 
       - shell: bash
