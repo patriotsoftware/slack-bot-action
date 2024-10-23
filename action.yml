@@ -39,8 +39,7 @@ outputs:
 
 runs:
   using: composite
-  steps:
-  
+  steps:  
       - name: Checkout Code
         uses: actions/checkout@v4
 
