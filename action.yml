@@ -37,8 +37,6 @@ outputs:
     description: "Status of message"
     value: ${{ steps.run-slackbot.outputs.validate-output }}
 
-
-
 runs:
   using: composite
   steps:
