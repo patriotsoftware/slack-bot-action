@@ -28,21 +28,21 @@ jobs:
             ReSharper Inspections:failure
             Deploy Dev:neither
 
-      - name: Trigger Slackbot Channel Test
-        id: trigger-slackbot-channel-test
-        uses: patriotsoftware/slack-bot-action@v1
-        with:
-          destination: "#aws-alerts"
-          message: "A new slackbot update has been triggered."
-          slack-token: ${{ secrets.SLACK_TOKEN }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          fallback-destination: "#aws-alerts"
-          results: |
-            Project Validation:success
-            ReSharper Inspections:failure
-            Deploy Dev:neither
+      # - name: Trigger Slackbot Channel Test
+      #   id: trigger-slackbot-channel-test
+      #   uses: patriotsoftware/slack-bot-action@v1
+      #   with:
+      #     destination: "#aws-alerts"
+      #     message: "A new slackbot update has been triggered."
+      #     slack-token: ${{ secrets.SLACK_TOKEN }}
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     fallback-destination: "#aws-alerts"
+      #     results: |
+      #       Project Validation:success
+      #       ReSharper Inspections:failure
+      #       Deploy Dev:neither
 
-      - name: Print Status
-        run: |
-          echo output from slackbot '${{ steps.trigger-slackbot-committer-test.outputs.validate-output }}'
-          echo output from slackbot '${{ steps.trigger-slackbot-channel-test.outputs.validate-output }}'
+      # - name: Print Status
+      #   run: |
+      #     echo output from slackbot '${{ steps.trigger-slackbot-committer-test.outputs.validate-output }}'
+      #     echo output from slackbot '${{ steps.trigger-slackbot-channel-test.outputs.validate-output }}'
