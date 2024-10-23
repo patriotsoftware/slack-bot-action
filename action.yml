@@ -77,6 +77,6 @@ runs:
           echo "!!!!!!!!!!!!!!"
           echo "First ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline
           echo "Second $(git log -n 1 --pretty=format:%ae)" # gets committer even on push
-          echo "Third ${{ steps.test.outputs.email }}"
+          echo "Third ${{ steps.get-email.outputs.email }}"
           echo "!!!!!!!!!!!!!!"
 
