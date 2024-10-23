@@ -55,13 +55,24 @@ runs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: get email
-        id: test
+        id: get-email
+        continue-on-error: true
         uses: patriotsoftware/get-github-email-by-username-action@v1.25
         with:
           github-username: ${{ github.triggering_actor }}
+
+      - name: Test Outputs Invalid Email
+        if: steps.get-email.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "!!!!!!!!!!!!!!"
+          echo "First ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline
+          echo "Second $(git log -n 1 --pretty=format:%ae)" # gets committer even on push
+          echo "!!!!!!!!!!!!!!"
           
       - name: Test Outputs
         shell: bash
+        if: steps.get-email.outcome == 'success'
         run: |
           echo "!!!!!!!!!!!!!!"
           echo "First ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline
