@@ -58,7 +58,7 @@ runs:
 
       - name: get email
         id: test
-        uses: evvanErb/get-github-email-by-username-action@v1.25
+        uses: patriotsoftware/get-github-email-by-username-action@v1.25
         with:
           github-username: ${{ github.triggering_actor }}
           
@@ -66,8 +66,8 @@ runs:
         shell: bash
         run: |
           echo "!!!!!!!!!!!!!!"
-          echo "First ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}"
-          echo "Second $(git log -n 1 --pretty=format:%ae)"
+          echo "First ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline
+          echo "Second $(git log -n 1 --pretty=format:%ae)" # gets committer even on push
           echo "Third ${{ steps.test.outputs.email }}"
           echo "!!!!!!!!!!!!!!"
 
