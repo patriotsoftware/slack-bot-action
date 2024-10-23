@@ -63,3 +63,5 @@ To test locally either run the test-action workflow with unique inputs, or run t
 - `export INPUT_MESSAGE="Your message"`
 - `export INPUT_DESTINATION="#yourChannel"` or `"@your_user"`
 - `go run main.go`
+
+Nate was X
