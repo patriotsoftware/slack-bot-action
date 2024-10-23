@@ -16,7 +16,7 @@ jobs:
 
       - name: Trigger Slackbot Committer Test
         id: trigger-slackbot-committer-test
-        uses: patriotsoftware/slack-bot-action@v1
+        uses: patriotsoftware/slack-bot-action@fix-committer
         with:
           destination: committer
           message: "A new slackbot update has been triggered."
