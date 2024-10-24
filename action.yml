@@ -70,7 +70,7 @@ runs:
       - id: parse-proper-email
         shell: bash
         env:
-          COMMITTER_EMAIL: "${{ steps.get-email-from-gh.outcome != 'success' && steps.get-email-from-gh.outputs.email || 'null' }}"
+          COMMITTER_EMAIL: "${{ steps.get-email-from-gh.outcome == 'success' && steps.get-email-from-gh.outputs.email || 'null' }}"
         run: |
              echo "${{ steps.get-email-from-gh.outputs.email }}"
              echo "${{ steps.get-email-from-gh.outcome }}"
