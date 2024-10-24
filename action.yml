@@ -69,12 +69,12 @@ runs:
           
       - name: Test Outputs
         shell: bash
-        if: steps.get-email.outcome == 'success'
+        # if: steps.get-email.outcome == 'success'
         run: |
-          if [ ${{steps.get-email.outcome}} == 'success ]; then
+          if [ ${{ steps.get-email.outcome }} == 'success ]; then
             echo "happy"
           fi
-          # echo "First Test to get email ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline
+          echo "First Test to get email ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline
           echo "Second Test to get email $(git log -n 1 --pretty=format:%ae)" # gets committer even on a trigger event
           echo "Third Test to get Email ${{ steps.get-email.outputs.email }}" # seems to work 
 
