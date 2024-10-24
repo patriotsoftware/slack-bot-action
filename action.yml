@@ -81,7 +81,7 @@ runs:
    
       - name: Find Slack user
         id: find-slack-user
-        if: steps.parse-proper-email.outputs.destination-email == *'@patriotsoftware.com'
+        if: contains(steps.parse-proper-email.outputs.destination-email, 'patriotsoftware.com')
         uses: scribd/find-slack-user-action@v1
         with:
           email: ${{ steps.parse-proper-email.outputs.destination-email }}
