@@ -90,47 +90,48 @@ runs:
           email: $DESTINATION_EMAIL
           slack-token: ${{ inputs.slack-token }}
 
+      # - shell: bash
+      #   id: parse_result
+      #   env:
+      #     INPUT_DESTINATION: ${{ inputs.destination }}
+      #     INPUT_FALLBACK_DESTINATION: ${{ inputs.fallback-destination }}
+      #     INPUT_MESSAGE: ${{ inputs.message }}
+      #     INPUT_RESULTS: ${{ inputs.results }}
+      #   run: |
+      #     # Make the results look nice
+      #     echo "Input Destination is $INPUT_DESTINATION"
+      #     echo "Fallback Destination is $INPUT_FALLBACK_DESTINATION"
+      #     echo "Email is ${{github.actor}}"
+      #     echo "Member id is ${{ steps.find-slack-user.outputs.member-id }}"
+      #     parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
+
+      #     # github actions doesn't support just passing multiline strings between steps
+      #     # so this needs to be formatted into the following
+      #     EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+      #     echo "text<<$EOF" >> $GITHUB_OUTPUT
+      #     echo "$INPUT_MESSAGE" >> $GITHUB_OUTPUT
+      #     echo "$parsed_results" >> $GITHUB_OUTPUT
+      #     echo "$EOF" >> $GITHUB_OUTPUT
+
+      #     if [[ "$INPUT_DESTINATION" == "#"* ]]; then
+      #       echo "Going to main destination channel"
+      #       echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
+      #     elif [[ "$INPUT_DESTINATION" == "committer" && "$DESTINATION_EMAIL" == *"@patriotsoftware.com" ]]; then
+      #       echo "Going to main committer"
+      #       echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
+      #     elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" && "$DESTINATION_EMAIL" == *"@patriotsoftware.com" ]]; then  
+      #       echo "Going to fallback committer"
+      #       echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
+      #     elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
+      #       echo "Going to fallback channel"
+      #       echo "destination=$INPUT_FALLBACK_DESTINATION" >> $GITHUB_OUTPUT
+      #     fi
+
       - shell: bash
-        id: parse_result
-        env:
-          INPUT_DESTINATION: ${{ inputs.destination }}
-          INPUT_FALLBACK_DESTINATION: ${{ inputs.fallback-destination }}
-          INPUT_MESSAGE: ${{ inputs.message }}
-          INPUT_RESULTS: ${{ inputs.results }}
         run: |
-          # Make the results look nice
-          echo "Input Destination is $INPUT_DESTINATION"
-          echo "Fallback Destination is $INPUT_FALLBACK_DESTINATION"
-          echo "Email is ${{github.actor}}"
-          echo "Member id is ${{ steps.find-slack-user.outputs.member-id }}"
-          parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
-
-          # github actions doesn't support just passing multiline strings between steps
-          # so this needs to be formatted into the following
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "text<<$EOF" >> $GITHUB_OUTPUT
-          echo "$INPUT_MESSAGE" >> $GITHUB_OUTPUT
-          echo "$parsed_results" >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
-
-          if [[ "$INPUT_DESTINATION" == "#"* ]]; then
-            echo "Going to main destination channel"
-            echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_DESTINATION" == "committer" && "$DESTINATION_EMAIL" == *"@patriotsoftware.com" ]]; then
-            echo "Going to main committer"
-            echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" && "$DESTINATION_EMAIL" == *"@patriotsoftware.com" ]]; then  
-            echo "Going to fallback committer"
-            echo "destination=$${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
-            echo "Going to fallback channel"
-            echo "destination=$INPUT_FALLBACK_DESTINATION" >> $GITHUB_OUTPUT
-          fi
-
-      - shell: bash
-        run: |
-          echo $DESTINATION_EMAIL
-          echo "${{ steps.parse_result.outputs.destination }}"
+          echo "Email is $DESTINATION_EMAIL"
+          echo "Member Id is ${{ steps.find-slack-user.outputs.member-id }}"
+          # echo "${{ steps.parse_result.outputs.destination }}"
 
       - name: Post to a Slack channel
         id: slack
