@@ -74,13 +74,13 @@ runs:
 
       - shell: bash
         env:
-          DESTINATION_EMAIL: "${{ steps.get-email-from-gh.outcome == 'success' && steps.get-email-from-gh.outputs.email || null}}"
+          DESTINATION_EMAIL: "${{ steps.get-email-from-gh.outcome == 'success' && steps.get-email-from-gh.outputs.email || $(git log -n 1 --pretty=format:%ae) }}"
         run: |
              echo "First Test to get email ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline & email not set          
              echo "Second Test to get email $(git log -n 1 --pretty=format:%ae)" # gets committer even on a trigger event
-             echo "Third Test to get Email ${{ steps.get-email-from-gh.email }}" # seems to work unless primary isn't set for patriot
+             echo "Third Test to get Email ${{ steps.get-email-from-gh.outputs.email }}" # seems to work unless primary isn't set for patriot
              echo "Fourth Test is ${{ env.DESTINATION_EMAIL }}"
-             
+
       # - name: get email fallback
       #   id: get-email-fallback
       #   shell: bash
