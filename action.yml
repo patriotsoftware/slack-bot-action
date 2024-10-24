@@ -74,7 +74,7 @@ runs:
 
       - shell: bash
         env:
-          DESTINATION_EMAIL: "${{ steps.get-email-from-gh.outcome == 'success' && steps.get-email-from-gh.outputs.email || $(git log -n 1 --pretty=format:%ae) }}"
+          DESTINATION_EMAIL: "${{ steps.get-email-from-gh.outcome == 'success' && steps.get-email-from-gh.outputs.email || noreply@github.com }}"
         run: |
              echo "First Test to get email ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline & email not set          
              echo "Second Test to get email $(git log -n 1 --pretty=format:%ae)" # gets committer even on a trigger event
