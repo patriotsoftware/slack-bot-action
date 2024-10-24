@@ -85,6 +85,7 @@ runs:
           
       - name: Find Slack user
         id: find-slack-user
+        if: steps.get-email.outcome == 'success' 
         uses: scribd/find-slack-user-action@v1
         with:
           email: ${{ env.DESTINATION_EMAIL }}
