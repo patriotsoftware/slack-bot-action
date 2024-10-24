@@ -131,14 +131,14 @@ runs:
         run: |
           echo "Email is ${{ env.DESTINATION_EMAIL }}"
           echo "Member Id is ${{ steps.find-slack-user.outputs.member-id }}"
-          # echo "${{ steps.parse_result.outputs.destination }}"
+          echo "Destination is ${{ steps.parse_result.outputs.destination }}"
 
-      - name: Post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v1.27        
-        env:
-          SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
-        with:
-          channel-id: "${{ steps.parse_result.outputs.destination }}"
-          slack-message: "${{ steps.parse_result.outputs.text }}"
+      # - name: Post to a Slack channel
+      #   id: slack
+      #   uses: slackapi/slack-github-action@v1.27        
+      #   env:
+      #     SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
+      #   with:
+      #     channel-id: "${{ steps.parse_result.outputs.destination }}"
+      #     slack-message: "${{ steps.parse_result.outputs.text }}"
           
