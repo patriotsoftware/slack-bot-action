@@ -64,23 +64,25 @@ runs:
         with:
           github-username: ${{ github.triggering_actor }}
 
-      - name: get email 
-        id: get-email
+      - id: parse-proper-email
         shell: bash
-        if: steps.get-email-from-gh.outcome == 'success' 
-        continue-on-error: true
-        run: |
-          echo "DESTINATION_EMAIL=${{ steps.get-email-from-gh.outputs.email }}" >> "$GITHUB_ENV"
-
-      - shell: bash
         env:
-          DESTINATION_EMAIL: "${{ steps.get-email-from-gh.outcome == 'success' && steps.get-email-from-gh.outputs.email || null }}"
+          COMMITTER_EMAIL: "${{ steps.get-email-from-gh.outcome == 'success' && steps.get-email-from-gh.outputs.email || 'null' }}"
         run: |
-             echo "First Test to get email ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline & email not set          
-             echo "Second Test to get email $(git log -n 1 --pretty=format:%ae)" # gets committer even on a trigger event
-             echo "Third Test to get Email ${{ steps.get-email-from-gh.outputs.email }}" # seems to work unless primary isn't set for patriot
-             echo "Fourth Test is ${{ env.DESTINATION_EMAIL }}"
-             
+             if [ "${{ env.DESTINATION_EMAIL }}" == 'null' && ${{ github.event_name != 'workflow_dispatch' }} ]; then 
+                echo "destination-email=${{ steps.get-email-from-gh.outputs.email }" >> $GITHUB_OUTPUT
+             else
+                echo "destination-email=$(git log -n 1 --pretty=format:%ae)" >> $GITHUB_OUTPUT
+             fi
+
+            #  echo "First Test to get email ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline & email not set          
+            #  echo "Second Test to get email $(git log -n 1 --pretty=format:%ae)" # gets committer even on a trigger event
+            #  echo "Third Test to get Email ${{ steps.get-email-from-gh.outputs.email }}" # seems to work unless primary isn't set for patriot
+            #  echo "Fourth Test is ${{ env.DESTINATION_EMAIL }}"
+            
+      - shell: bash
+        run: |
+          echo "Email we're going with is ${{ steps.parse-proper-email.outputs.destination-email }} "   
       # - name: get email fallback
       #   id: get-email-fallback
       #   shell: bash
