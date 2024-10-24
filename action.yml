@@ -125,6 +125,10 @@ runs:
           elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
             echo "Going to fallback channel"
             echo "destination=$INPUT_FALLBACK_DESTINATION" >> $GITHUB_OUTPUT
+          else
+            echo "NO CONDITIONALS FOUND"
+            echo "Fallback is $INPUT_FALLBACK_DESTINATION"       
+            echo "Input destination is $INPUT_DESTINATION"
           fi
 
       - shell: bash
@@ -133,12 +137,12 @@ runs:
           echo "Member Id is ${{ steps.find-slack-user.outputs.member-id }}"
           echo "Destination is ${{ steps.parse_result.outputs.destination }}"
 
-      # - name: Post to a Slack channel
-      #   id: slack
-      #   uses: slackapi/slack-github-action@v1.27        
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
-      #   with:
-      #     channel-id: "${{ steps.parse_result.outputs.destination }}"
-      #     slack-message: "${{ steps.parse_result.outputs.text }}"
+      - name: Post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.27        
+        env:
+          SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
+        with:
+          channel-id: "${{ steps.parse_result.outputs.destination }}"
+          slack-message: "${{ steps.parse_result.outputs.text }}"
           
