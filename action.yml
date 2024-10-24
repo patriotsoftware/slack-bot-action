@@ -64,8 +64,6 @@ runs:
         with:
           github-username: ${{ github.triggering_actor }}
 
-      - shell: bash
-        run: 
       - name: get email 
         id: get-email
         shell: bash
@@ -73,78 +71,84 @@ runs:
         continue-on-error: true
         run: |
           echo "DESTINATION_EMAIL=${{ steps.get-email-from-gh.outputs.email }}" >> "$GITHUB_ENV"
-          
-      - name: get email fallback
-        id: get-email-fallback
-        shell: bash
-        # This will get committer, so don't want to use it if the workflow dispatch was used
-        if: steps.get-email.outcome != 'success' && github.event_name != 'workflow_dispatch'
-        continue-on-error: true
-        run: |
-          
-          echo "DESTINATION_EMAIL=$(git log -n 1 --pretty=format:%ae)" >> "$GITHUB_ENV"
-          
-      - name: Find Slack user
-        id: find-slack-user
-        if: steps.get-email.outcome == 'success' 
-        uses: scribd/find-slack-user-action@v1
-        with:
-          email: ${{ env.DESTINATION_EMAIL }}
-          slack-token: ${{ inputs.slack-token }}
-
-      - shell: bash
-        id: parse_result
-        env:
-          INPUT_DESTINATION: ${{ inputs.destination }}
-          INPUT_FALLBACK_DESTINATION: ${{ inputs.fallback-destination }}
-          INPUT_MESSAGE: ${{ inputs.message }}
-          INPUT_RESULTS: ${{ inputs.results }}
-        run: |
-          # Make the results look nice
-          echo "Input Destination is $INPUT_DESTINATION"
-          echo "Fallback Destination is $INPUT_FALLBACK_DESTINATION"
-          echo "Email is ${{github.actor}}"
-          echo "Member id is ${{ steps.find-slack-user.outputs.member-id }}"
-          parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
-
-          # github actions doesn't support just passing multiline strings between steps
-          # so this needs to be formatted into the following
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "text<<$EOF" >> $GITHUB_OUTPUT
-          echo "$INPUT_MESSAGE" >> $GITHUB_OUTPUT
-          echo "$parsed_results" >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
-
-          if [[ "$INPUT_DESTINATION" == "#"* ]]; then
-            echo "Going to main destination channel"
-            echo "destination=$INPUT_DESTINATION" >> "$GITHUB_OUTPUT"
-          elif [[ "$INPUT_DESTINATION" == "committer" && "${{ env.DESTINATION_EMAIL }}" == *"@patriotsoftware.com" ]]; then
-            echo "Going to main committer"
-            echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> "$GITHUB_OUTPUT"
-          elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" && "${{ env.DESTINATION_EMAIL }}" == *"@patriotsoftware.com" ]]; then  
-            echo "Going to fallback committer"
-            echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> "$GITHUB_OUTPUT"
-          elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
-            echo "Going to fallback channel"
-            echo "destination=$INPUT_FALLBACK_DESTINATION" >> "$GITHUB_OUTPUT"
-          else
-            echo "NO CONDITIONALS FOUND"
-            echo "Fallback is $INPUT_FALLBACK_DESTINATION"       
-            echo "Input destination is $INPUT_DESTINATION"
-          fi
 
       - shell: bash
         run: |
-          echo "Email is ${{ env.DESTINATION_EMAIL }}"
-          echo "Member Id is ${{ steps.find-slack-user.outputs.member-id }}"
-          echo "Destination is ${{ steps.parse_result.outputs.destination }}"
+             echo "First Test to get email ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline & email not set          
+             echo "Second Test to get email $(git log -n 1 --pretty=format:%ae)" # gets committer even on a trigger event
+             echo "Third Test to get Email ${{ steps.get-email-from-gh.email }}" # seems to work unless primary isn't set for patriot
+             echo "Fourth Test is ${{ env.DESTINATION_EMAIL }}"
+      # - name: get email fallback
+      #   id: get-email-fallback
+      #   shell: bash
+      #   # This will get committer, so don't want to use it if the workflow dispatch was used
+      #   if: steps.get-email.outcome != 'success' && github.event_name != 'workflow_dispatch'
+      #   continue-on-error: true
+      #   run: |
+          
+      #     echo "DESTINATION_EMAIL=$(git log -n 1 --pretty=format:%ae)" >> "$GITHUB_ENV"
+          
+      # - name: Find Slack user
+      #   id: find-slack-user
+      #   if: steps.get-email.outcome == 'success' 
+      #   uses: scribd/find-slack-user-action@v1
+      #   with:
+      #     email: ${{ env.DESTINATION_EMAIL }}
+      #     slack-token: ${{ inputs.slack-token }}
 
-      - name: Post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v1.27        
-        env:
-          SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
-        with:
-          channel-id: "${{ steps.parse_result.outputs.destination }}"
-          slack-message: "${{ steps.parse_result.outputs.text }}"
+      # - shell: bash
+      #   id: parse_result
+      #   env:
+      #     INPUT_DESTINATION: ${{ inputs.destination }}
+      #     INPUT_FALLBACK_DESTINATION: ${{ inputs.fallback-destination }}
+      #     INPUT_MESSAGE: ${{ inputs.message }}
+      #     INPUT_RESULTS: ${{ inputs.results }}
+      #   run: |
+      #     # Make the results look nice
+      #     echo "Input Destination is $INPUT_DESTINATION"
+      #     echo "Fallback Destination is $INPUT_FALLBACK_DESTINATION"
+      #     echo "Email is ${{github.actor}}"
+      #     echo "Member id is ${{ steps.find-slack-user.outputs.member-id }}"
+      #     parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
+
+      #     # github actions doesn't support just passing multiline strings between steps
+      #     # so this needs to be formatted into the following
+      #     EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+      #     echo "text<<$EOF" >> $GITHUB_OUTPUT
+      #     echo "$INPUT_MESSAGE" >> $GITHUB_OUTPUT
+      #     echo "$parsed_results" >> $GITHUB_OUTPUT
+      #     echo "$EOF" >> $GITHUB_OUTPUT
+
+      #     if [[ "$INPUT_DESTINATION" == "#"* ]]; then
+      #       echo "Going to main destination channel"
+      #       echo "destination=$INPUT_DESTINATION" >> "$GITHUB_OUTPUT"
+      #     elif [[ "$INPUT_DESTINATION" == "committer" && "${{ env.DESTINATION_EMAIL }}" == *"@patriotsoftware.com" ]]; then
+      #       echo "Going to main committer"
+      #       echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> "$GITHUB_OUTPUT"
+      #     elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" && "${{ env.DESTINATION_EMAIL }}" == *"@patriotsoftware.com" ]]; then  
+      #       echo "Going to fallback committer"
+      #       echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> "$GITHUB_OUTPUT"
+      #     elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
+      #       echo "Going to fallback channel"
+      #       echo "destination=$INPUT_FALLBACK_DESTINATION" >> "$GITHUB_OUTPUT"
+      #     else
+      #       echo "NO CONDITIONALS FOUND"
+      #       echo "Fallback is $INPUT_FALLBACK_DESTINATION"       
+      #       echo "Input destination is $INPUT_DESTINATION"
+      #     fi
+
+      # - shell: bash
+      #   run: |
+      #     echo "Email is ${{ env.DESTINATION_EMAIL }}"
+      #     echo "Member Id is ${{ steps.find-slack-user.outputs.member-id }}"
+      #     echo "Destination is ${{ steps.parse_result.outputs.destination }}"
+
+      # - name: Post to a Slack channel
+      #   id: slack
+      #   uses: slackapi/slack-github-action@v1.27        
+      #   env:
+      #     SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
+      #   with:
+      #     channel-id: "${{ steps.parse_result.outputs.destination }}"
+      #     slack-message: "${{ steps.parse_result.outputs.text }}"
           
