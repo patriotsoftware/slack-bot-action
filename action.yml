@@ -46,12 +46,12 @@ runs:
       #   # the slack github action doesn't support user emails directly
       #   # use this method to get the user's slack memberid from the email 
       #   # it uses the github email of the last commit to find this info
-      # - uses: octokit/request-action@v2.x
-      #   id: get_commit_email
-      #   with:
-      #     route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ github.token }}
+      - uses: octokit/request-action@v2.x
+        id: get_commit_email
+        with:
+          route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       #  - run: |
       #        echo "First Test to get email ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline & email not set          
       #        echo "Second Test to get email $(git log -n 1 --pretty=format:%ae)" # gets committer even on a trigger event
