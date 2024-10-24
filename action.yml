@@ -73,6 +73,7 @@ runs:
           COMMITTER_EMAIL: "${{ steps.get-email-from-gh.outcome != 'success' && steps.get-email-from-gh.outputs.email || 'null' }}"
         run: |
              if [ "${{ env.COMMITTER_EMAIL }}" != "null" ]; then 
+                echo "Email found in api"
                 echo "destination-email=${{ steps.get-email-from-gh.outputs.email }}" >> $GITHUB_OUTPUT
              elif [ ${{ github.event_name != 'workflow_dispatch' }} ]; then 
                 echo "Grabbing the committer email"  
@@ -131,7 +132,7 @@ runs:
 
       - shell: bash
         run: |
-          echo "Email is${{ steps.parse-proper-email.outputs.destination-email }}"
+          echo "Email is ${{ steps.parse-proper-email.outputs.destination-email }}"
           echo "Member Id is ${{ steps.find-slack-user.outputs.member-id }}"
           echo "Destination is ${{ steps.parse_result.outputs.destination }}"
 
