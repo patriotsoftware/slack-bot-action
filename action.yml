@@ -72,6 +72,7 @@ runs:
         env:
           COMMITTER_EMAIL: "${{ steps.get-email-from-gh.outcome != 'success' && steps.get-email-from-gh.outputs.email || 'null' }}"
         run: |
+             echo "${{ steps.get-email-from-gh.outputs.email }}"
              echo $${{ env.COMMITTER_EMAIL }}
              if [ "${{ env.COMMITTER_EMAIL }}" != "null" ]; then 
                 echo "Email found in api"
