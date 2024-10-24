@@ -70,11 +70,12 @@ runs:
       - id: parse-proper-email
         shell: bash
         env:
-          COMMITTER_EMAIL: "${{ steps.get-email-from-gh.outcome == 'success' && steps.get-email-from-gh.outputs.email || 'null' }}"
+          COMMITTER_EMAIL: "${{ steps.get-email-from-gh.outcome != 'success' && steps.get-email-from-gh.outputs.email || 'null' }}"
         run: |
              if [ "${{ env.COMMITTER_EMAIL }}" != 'null' ]; then 
                 echo "destination-email=${{ steps.get-email-from-gh.outputs.email }}" >> $GITHUB_OUTPUT
-             elif [ ${{ github.event_name != 'workflow_dispatch' }} ]; then   
+             elif [ ${{ github.event_name != 'workflow_dispatch' }} ]; then 
+                echo "Grabbing the committer email"  
                 echo "destination-email=$(git log -n 1 --pretty=format:%ae)" >> $GITHUB_OUTPUT
              fi
 
