@@ -64,6 +64,8 @@ runs:
         with:
           github-username: ${{ github.triggering_actor }}
 
+      - shell: bash
+        run: 
       - name: get email 
         id: get-email
         shell: bash
@@ -126,7 +128,9 @@ runs:
           fi
 
       - shell: bash
-        run: echo "${{ steps.parse_result.outputs.destination }}"
+        run: |
+          echo $DESTINATION_EMAIL
+          echo "${{ steps.parse_result.outputs.destination }}"
 
       - name: Post to a Slack channel
         id: slack
