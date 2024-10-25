@@ -78,7 +78,7 @@ runs:
              if [ "${{ env.COMMITTER_EMAIL }}" != "null" ]; then 
                 echo "Email found in api"
                 echo "destination-email=${{ steps.get-email-from-gh.outputs.email }}" >> $GITHUB_OUTPUT
-             elif [ ${{ github.event_name != 'workflow_dispatch' }} ]; then 
+             elif [ ${{ github.event_name }} != 'workflow_dispatch' ]; then 
                 echo "Grabbing the committer email"  
                 echo "destination-email=$(git log -n 1 --pretty=format:%ae)" >> $GITHUB_OUTPUT
              fi
