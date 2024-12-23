@@ -74,7 +74,7 @@ runs:
         shell: bash
         env:
           ACTOR_EMAIL: "${{ steps.user_email_from_gh.outcome == 'success' && steps.user_email_from_gh.outputs.email || '' }}"
-          COMMITTER_EMAIL: "${{  github.event_name }} != 'workflow_dispatch' && $(git log -n 1 --pretty=format:%ae) || '' }}"
+          COMMITTER_EMAIL: "${{  github.event_name != 'workflow_dispatch' && $(git log -n 1 --pretty=format:%ae) || '' }}"
           PATRIOT_EMAIL: "${{ contains(inputs.destination, '@patriotsoftware.com') && inputs.destination || '' }}"
         run: |
           echo "${{ steps.user_email_from_gh.outputs.email }}"
