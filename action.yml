@@ -132,7 +132,7 @@ runs:
             echo "Going to fallback committer"
             echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_FALLBACK_DESTINATION" == *"@patriotsoftware.com" ]]; then 
-            echo "Going to Patriot email"
+            echo "Going to fallback Patriot email"
             echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
             echo "Going to fallback channel"
