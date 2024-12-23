@@ -66,6 +66,7 @@ runs:
         uses: patriotsoftware/get-github-email-by-username-action@v1.25
         with:
           github-username: ${{ github.triggering_actor }}
+          token: ${{ github.token }}
 
       - id: parse-proper-email
         shell: bash
