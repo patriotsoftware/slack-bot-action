@@ -74,21 +74,23 @@ runs:
         shell: bash
         env:
           ACTOR_EMAIL: "${{ steps.user_email_from_gh.outcome == 'success' && steps.user_email_from_gh.outputs.email || '' }}"
-          COMMITTER_EMAIL: "${{  github.event_name != 'workflow_dispatch' && $(git log -n 1 --pretty=format:%ae) || '' }}"
+          COMMITTER_EMAIL: "${{ github.event_name != 'workflow_dispatch' && $(git log -n 1 --pretty=format:%ae) || '' }}"
           PATRIOT_EMAIL: "${{ contains(inputs.destination, '@patriotsoftware.com') && inputs.destination || '' }}"
         run: |
           echo "${{ steps.user_email_from_gh.outputs.email }}"
           echo "${{ steps.user_email_from_gh.outcome }}"
           echo ${{ env.COMMITTER_EMAIL }}
-          if [[ $ACTOR_EMAIL != '' ]]; then 
-            echo "Actor $ACTOR_EMAIL found in API" 
-          elif [[ $COMMITTER_EMAIL != '' ]]; then 
-            echo "Committer $COMMITTER_EMAIL email" 
-            echo "destination-email=$COMMITTER_EMAIL" >> $GITHUB_OUTPUT
-          elif [[ $PATRIOT_EMAIL != '' ]]; then 
-            echo "Patriot email"  
-            echo "destination-email=$PATRIOT_EMAIL" >> $GITHUB_OUTPUT
+          if [[ ${{ steps.user_email_from_gh.outcome }} == 'success' ]]; then
+            EMAIL="${{ steps.user_email_from_gh.outputs.email }}"
+            echo "Actor $EMAIL found in API" 
+          elif [[ ${{ github.event_name }} != 'workflow_dispatch' ]]; then 
+            EMAIL="$(git log -n 1 --pretty=format:%ae)"
+            echo "Committer $EMAIL email" 
+          elif [[ ${{ contains(inputs.destination, '@patriotsoftware.com') }} ]]; then 
+            EMAIL="${{ inputs.destination }}"
+            echo "Patriot email $EMAIL"  
           fi
+          echo "destination-email=$EMAIL" >> $GITHUB_OUTPUT
 
       - name: Find Slack user
         id: find-slack-user
