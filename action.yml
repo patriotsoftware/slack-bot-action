@@ -76,10 +76,10 @@ runs:
           echo "${{ steps.user_email_from_gh.outputs.email }}"
           echo "${{ steps.user_email_from_gh.outcome }}"
           echo ${{ env.COMMITTER_EMAIL }}
-          if [[ "${{ steps.user_email_from_gh.outcome }}" == 'success' ]]; then
+          if [[ "${{ steps.user_email_from_gh.outcome }}" == "success" ]]; then
             EMAIL="${{ steps.user_email_from_gh.outputs.email }}"
             echo "Actor $EMAIL found in API" 
-          elif [[ "${{ github.event_name }}" != 'workflow_dispatch' ]]; then 
+          elif [[ "${{ github.event_name }}" != "workflow_dispatch" ]]; then 
             EMAIL="$(git log -n 1 --pretty=format:%ae)"
             echo "Committer $EMAIL email" 
           elif [[ ${{ contains(inputs.destination, '@patriotsoftware.com') }} ]]; then 
