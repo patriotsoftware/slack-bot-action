@@ -78,7 +78,7 @@ runs:
         run: |
              echo "${{ steps.get-email-from-gh.outputs.email }}"
              echo "${{ steps.get-email-from-gh.outcome }}"
-             echo $${{ env.COMMITTER_EMAIL }}
+             echo ${{ env.COMMITTER_EMAIL }}
              if [ "${{ env.COMMITTER_EMAIL }}" != "null" ]; then 
                 echo "Email found in api"
                 echo "destination-email=${{ steps.get-email-from-gh.outputs.email }}" >> $GITHUB_OUTPUT
