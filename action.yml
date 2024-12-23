@@ -47,6 +47,7 @@ runs:
       #   # use this method to get the user's slack memberid from the email 
       #   # it uses the github email of the last commit to find this info
       - uses: octokit/request-action@v2.x
+        if: inputs.destination == 'committer'
         id: get_commit_email
         with:
           route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
@@ -61,6 +62,7 @@ runs:
       # There are a minimal amount it fails for, so for those we get the committer.
       # Unless its a workflow dispatch, because we don't want to go to someone who doesn't care about the run.
       - name: get email from github trigger
+        if: inputs.destination == 'committer'
         id: get-email-from-gh
         continue-on-error: true
         uses: patriotsoftware/get-github-email-by-username-action@v1.25
@@ -69,6 +71,7 @@ runs:
           token: ${{ github.token }}
 
       - id: parse-proper-email
+        if: inputs.destination == 'committer'
         shell: bash
         env:
           COMMITTER_EMAIL: "${{ steps.get-email-from-gh.outcome == 'success' && steps.get-email-from-gh.outputs.email || 'null' }}"
