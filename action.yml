@@ -134,10 +134,10 @@ runs:
             echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_FALLBACK_DESTINATION" == *"@patriotsoftware.com" ]]; then 
             echo "Going to fallback Patriot email"
-            echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
+            echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
             echo "Going to fallback channel"
-            echo "destination=$INPUT_FALLBACK_DESTINATION" >> $GITHUB_OUTPUT
+            echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
           else
             echo "NO CONDITIONALS FOUND"
             echo "Fallback is $INPUT_FALLBACK_DESTINATION"       
