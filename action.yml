@@ -60,10 +60,10 @@ runs:
     run: |
       if [[ "${{ steps.gh_user_email.outcome }}" == "success" ]]; then
         EMAIL="${{ steps.gh_user_email.outputs.email }}"
-        echo "Actor $EMAIL found in API" 
+        echo "Committer: Using trigger actor $EMAIL found in API" 
       elif [[ "${{ github.event_name }}" != "workflow_dispatch" ]]; then 
         EMAIL="$(git log -n 1 --pretty=format:%ae)"
-        echo "Committer $EMAIL email" 
+        echo "Committer: Using workflow dispatch $EMAIL email" 
       elif [[ ${{ contains(inputs.destination, '@patriotsoftware.com') }} ]]; then 
         EMAIL="${{ inputs.destination }}"
         echo "Patriot email as destination $EMAIL"
@@ -91,8 +91,8 @@ runs:
       USER_EMAIL: ${{ steps.user.outputs.email }}
       MEMBER_ID: ${{ steps.slack-user.outputs.member-id }}
     run: |
-      echo "Email is ${{ steps.user.outputs.email }}"
-      echo "Member id is ${{ steps.slack-user.outputs.member-id }}"
+      echo "User Email: ${{ steps.user.outputs.email }}"
+      echo "Slack member id: ${{ steps.slack-user.outputs.member-id }}"
 
       # Make the results look nice
       parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
@@ -106,25 +106,19 @@ runs:
       echo "$EOF" >> $GITHUB_OUTPUT
 
       if [[ $INPUT_DESTINATION == "#"* ]]; then
-        echo "Going to main destination channel"
+        echo "Slack destination channel: $INPUT_DESTINATION"
         echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT                    
       elif [[ $MEMBER_ID != "" ]]; then
-        echo "Using Slack member id"
+        echo "Slack using member id: $MEMBER_ID"
         echo "destination=$MEMBER_ID" >> $GITHUB_OUTPUT      
       elif [[ $INPUT_FALLBACK_DESTINATION == "#"* ]]; then  
-        echo "Going to fallback committer"
+        echo "Slack fallback channel: $INPUT_FALLBACK_DESTINATION"
         echo "destination=$INPUT_FALLBACK_DESTINATION" >> $GITHUB_OUTPUT
       else
         echo "NO CONDITIONALS FOUND"
-        echo "Fallback is $INPUT_FALLBACK_DESTINATION"       
-        echo "Input destination is $INPUT_DESTINATION"
+        echo "Destination: $INPUT_DESTINATION"
+        echo "Fallback: $INPUT_FALLBACK_DESTINATION" 
       fi
-
-  - shell: bash
-    run: |
-      echo "Email is ${{ steps.user.outputs.email }}"
-      echo "Member Id is ${{ steps.slack-user.outputs.member-id }}"
-      echo "Destination is ${{ steps.parse_result.outputs.destination }}"
 
   # - name: Post to a Slack channel
   #   id: slack
