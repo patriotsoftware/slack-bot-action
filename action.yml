@@ -91,8 +91,6 @@ runs:
       USER_EMAIL: ${{ steps.user.outputs.email }}
       MEMBER_ID: ${{ steps.slack-user.outputs.member-id }}
     run: |
-      echo "Input Destination is $INPUT_DESTINATION"
-      echo "Fallback Destination is $INPUT_FALLBACK_DESTINATION"
       echo "Email is ${{ steps.user.outputs.email }}"
       echo "Member id is ${{ steps.slack-user.outputs.member-id }}"
 
@@ -107,20 +105,14 @@ runs:
       echo "$parsed_results" >> $GITHUB_OUTPUT
       echo "$EOF" >> $GITHUB_OUTPUT
 
-      if [[ "$INPUT_DESTINATION" == "#"* ]]; then
+      if [[ $INPUT_DESTINATION == "#"* ]]; then
         echo "Going to main destination channel"
         echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT                    
-      elif [[ "$INPUT_DESTINATION" == *"committer"* && $DESTINATION_EMAIL == *"@patriotsoftware.com" ]]; then
-        echo "Going to main committer"
-        echo "destination=$MEMBER_ID" >> $GITHUB_OUTPUT
-      elif [[ "$INPUT_DESTINATION" == *"@patriotsoftware.com" ]]; then 
-        echo "Going to Patriot email"
-        echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
-      elif [[ "$INPUT_FALLBACK_DESTINATION" == *"committer"* && $DESTINATION_EMAIL == *"@patriotsoftware.com" ]]; then  
+      elif [[ $MEMBER_ID != "" ]]; then
+        echo "Using Slack member id"
+        echo "destination=$MEMBER_ID" >> $GITHUB_OUTPUT      
+      elif [[ $INPUT_FALLBACK_DESTINATION == "#"* ]]; then  
         echo "Going to fallback committer"
-        echo "destination=$MEMBER_ID" >> $GITHUB_OUTPUT
-      elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
-        echo "Going to fallback channel"
         echo "destination=$INPUT_FALLBACK_DESTINATION" >> $GITHUB_OUTPUT
       else
         echo "NO CONDITIONALS FOUND"
