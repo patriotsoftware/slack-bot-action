@@ -50,7 +50,7 @@ runs:
     if: contains(inputs.destination, 'committer') || contains(inputs.fallback-destination, 'committer')
     id: gh_user_email
     continue-on-error: true
-    uses: patriotsoftware/get-github-email-by-username-action@v1.25
+    uses: patriotsoftware/get-github-email-by-username-action@test
     with:
       github-username: ${{ github.triggering_actor }}
       token: ${{ github.token }}
