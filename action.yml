@@ -91,9 +91,6 @@ runs:
       USER_EMAIL: ${{ steps.user.outputs.email }}
       MEMBER_ID: ${{ steps.slack-user.outputs.member-id }}
     run: |
-      echo "User Email: ${{ steps.user.outputs.email }}"
-      echo "Slack member id: ${{ steps.slack-user.outputs.member-id }}"
-
       # Make the results look nice
       parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
 
