@@ -37,9 +37,7 @@ outputs:
     description: "Status of message"
     value: ${{ steps.run-slackbot.outputs.validate-output }}
 
-# NOTE:
-#   - single Patriot email or committer can be used as destination or fallback, not in conjuction
-
+# NOTE: single Patriot email or committer can be used as destination or fallback, not in conjuction
 runs:
   using: composite
   steps:  
@@ -117,12 +115,12 @@ runs:
         echo "Fallback: $INPUT_FALLBACK_DESTINATION" 
       fi
 
-  # - name: Post to a Slack channel
-  #   id: slack
-  #   uses: slackapi/slack-github-action@v1.27        
-  #   env:
-  #     SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
-  #   with:
-  #     channel-id: "${{ steps.parse_result.outputs.destination }}"
-  #     slack-message: "${{ steps.parse_result.outputs.text }}"
+  - name: Post to a Slack channel
+    id: slack
+    uses: slackapi/slack-github-action@v1.27        
+    env:
+      SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
+    with:
+      channel-id: "${{ steps.parse_result.outputs.destination }}"
+      slack-message: "${{ steps.parse_result.outputs.text }}"
       
