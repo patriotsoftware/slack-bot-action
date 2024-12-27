@@ -112,11 +112,13 @@ runs:
       else
         echo "NO CONDITIONALS FOUND"
         echo "Destination: $INPUT_DESTINATION"
-        echo "Fallback: $INPUT_FALLBACK_DESTINATION" 
+        echo "Fallback: $INPUT_FALLBACK_DESTINATION"
+        exit 1 
       fi
 
   - name: Post to a Slack channel
     id: slack
+    if: success()
     uses: slackapi/slack-github-action@v1.27        
     env:
       SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
