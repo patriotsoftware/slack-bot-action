@@ -121,7 +121,7 @@ runs:
           elif [[ "$INPUT_DESTINATION" == "committer" && "${{ steps.parse-proper-email.outputs.destination-email }}" == *"@patriotsoftware.com" ]]; then
             echo "Going to main committer"
             echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
-          elif [[ $INPUT_FALLBACK_DESTINATION == "disabled" ]]; then
+          elif [[ "$INPUT_FALLBACK_DESTINATION" == "disabled" ]]; then
             echo "Fallback disabled, nothing will be delivered"
             exit 0
           elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" && "${{ steps.parse-proper-email.outputs.destination-email }}" == *"@patriotsoftware.com" ]]; then
