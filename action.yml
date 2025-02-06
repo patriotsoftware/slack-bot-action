@@ -137,6 +137,7 @@ runs:
           fi
 
       - shell: bash
+        if: ${{ steps.parse_result.outputs.destination != 'disabled' }}
         run: |
           echo "Email is ${{ steps.parse-proper-email.outputs.destination-email }}"
           echo "Member Id is ${{ steps.find-slack-user.outputs.member-id }}"
@@ -144,10 +145,10 @@ runs:
 
       - name: Post to a Slack channel
         id: slack
+        if: ${{ steps.parse_result.outputs.destination != 'disabled' }}
         uses: slackapi/slack-github-action@v1.27
         env:
           SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
         with:
           channel-id: "${{ steps.parse_result.outputs.destination }}"
           slack-message: "${{ steps.parse_result.outputs.text }}"
-
