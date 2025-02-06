@@ -39,12 +39,12 @@ outputs:
 
 runs:
   using: composite
-  steps:  
+  steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       #   # the slack github action doesn't support user emails directly
-      #   # use this method to get the user's slack memberid from the email 
+      #   # use this method to get the user's slack memberid from the email
       #   # it uses the github email of the last commit to find this info
       - uses: octokit/request-action@v2.x
         id: get_commit_email
@@ -53,11 +53,11 @@ runs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       #  - run: |
-      #        echo "First Test to get email ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline & email not set          
+      #        echo "First Test to get email ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline & email not set
       #        echo "Second Test to get email $(git log -n 1 --pretty=format:%ae)" # gets committer even on a trigger event
       #        echo "Third Test to get Email ${{ steps.get-email.outputs.email }}" # seems to work unless primary isn't set for patriot
-      
-      # This gets the correct email in the majority of cases. 
+
+      # This gets the correct email in the majority of cases.
       # There are a minimal amount it fails for, so for those we get the committer.
       # Unless its a workflow dispatch, because we don't want to go to someone who doesn't care about the run.
       - name: get email from github trigger
@@ -75,11 +75,11 @@ runs:
              echo "${{ steps.get-email-from-gh.outputs.email }}"
              echo "${{ steps.get-email-from-gh.outcome }}"
              echo $${{ env.COMMITTER_EMAIL }}
-             if [ "${{ env.COMMITTER_EMAIL }}" != "null" ]; then 
+             if [ "${{ env.COMMITTER_EMAIL }}" != "null" ]; then
                 echo "Email found in api"
                 echo "destination-email=${{ steps.get-email-from-gh.outputs.email }}" >> $GITHUB_OUTPUT
-             elif [ ${{ github.event_name }} != 'workflow_dispatch' ]; then 
-                echo "Grabbing the committer email"  
+             elif [ ${{ github.event_name }} != 'workflow_dispatch' ]; then
+                echo "Grabbing the committer email"
                 echo "destination-email=$(git log -n 1 --pretty=format:%ae)" >> $GITHUB_OUTPUT
              fi
 
@@ -121,7 +121,10 @@ runs:
           elif [[ "$INPUT_DESTINATION" == "committer" && "${{ steps.parse-proper-email.outputs.destination-email }}" == *"@patriotsoftware.com" ]]; then
             echo "Going to main committer"
             echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" && "${{ steps.parse-proper-email.outputs.destination-email }}" == *"@patriotsoftware.com" ]]; then  
+          elif [[ $INPUT_FALLBACK_DESTINATION == "disabled" ]]; then
+            echo "Fallback disabled, nothing will be delivered"
+            exit 0
+          elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" && "${{ steps.parse-proper-email.outputs.destination-email }}" == *"@patriotsoftware.com" ]]; then
             echo "Going to fallback committer"
             echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
           elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
@@ -129,7 +132,7 @@ runs:
             echo "destination=$INPUT_FALLBACK_DESTINATION" >> $GITHUB_OUTPUT
           else
             echo "NO CONDITIONALS FOUND"
-            echo "Fallback is $INPUT_FALLBACK_DESTINATION"       
+            echo "Fallback is $INPUT_FALLBACK_DESTINATION"
             echo "Input destination is $INPUT_DESTINATION"
           fi
 
@@ -141,10 +144,10 @@ runs:
 
       - name: Post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.27        
+        uses: slackapi/slack-github-action@v1.27
         env:
           SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
         with:
           channel-id: "${{ steps.parse_result.outputs.destination }}"
           slack-message: "${{ steps.parse_result.outputs.text }}"
-          
+
