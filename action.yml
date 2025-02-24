@@ -18,12 +18,14 @@ inputs:
   github-token:
     description: "GitHub Repository to for getting commit email. Use: secrets.GITHUB_TOKEN "
     required: false
-  github-repository:
-    description: "GitHub Repository to for getting commit email. Default: github.repository"
+  username-mapping-repository:
+    description: "GitHub Repository that contains the github -> slack username mapping file."
     required: false
-  github-sha:
-    description: "GitHub SHA to for getting commit email. Default: github.sha"
+    default: "SynergyDataSystems/GHA.Shared"
+  username-mapping-path:
+    description: "Path relative to the root of the repository that contains the github -> slack username mapping file."
     required: false
+    default: ".github/username-mapping.yml"
   remove-branch-prefix:
     description: "Removes branch /refs/head/ from string instances of /refs/heads. Values: true/false"
     required: false
@@ -38,117 +40,17 @@ outputs:
     value: ${{ steps.run-slackbot.outputs.validate-output }}
 
 runs:
-  using: composite
-  steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+  using: docker
+  image: 'Dockerfile' # swap to released image once done testing
+  env:
+    GITHUB_INPUTS: ${{ toJSON(inputs) }}
 
-      #   # the slack github action doesn't support user emails directly
-      #   # use this method to get the user's slack memberid from the email
-      #   # it uses the github email of the last commit to find this info
-      - uses: octokit/request-action@v2.x
-        id: get_commit_email
-        with:
-          route: GET /repos/${{ github.repository }}/commits/${{ github.sha }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-      #  - run: |
-      #        echo "First Test to get email ${{ fromJson(steps.get_commit_email.outputs.data).commit.committer.email }}" # doesn't work if change made inline & email not set
-      #        echo "Second Test to get email $(git log -n 1 --pretty=format:%ae)" # gets committer even on a trigger event
-      #        echo "Third Test to get Email ${{ steps.get-email.outputs.email }}" # seems to work unless primary isn't set for patriot
-
-      # This gets the correct email in the majority of cases.
-      # There are a minimal amount it fails for, so for those we get the committer.
-      # Unless its a workflow dispatch, because we don't want to go to someone who doesn't care about the run.
-      - name: get email from github trigger
-        id: get-email-from-gh
-        continue-on-error: true
-        uses: patriotsoftware/get-github-email-by-username-action@v1.25
-        with:
-          github-username: ${{ github.triggering_actor }}
-
-      - id: parse-proper-email
-        shell: bash
-        env:
-          COMMITTER_EMAIL: "${{ steps.get-email-from-gh.outcome == 'success' && steps.get-email-from-gh.outputs.email || 'null' }}"
-        run: |
-             echo "${{ steps.get-email-from-gh.outputs.email }}"
-             echo "${{ steps.get-email-from-gh.outcome }}"
-             echo $${{ env.COMMITTER_EMAIL }}
-             if [ "${{ env.COMMITTER_EMAIL }}" != "null" ]; then
-                echo "Email found in api"
-                echo "destination-email=${{ steps.get-email-from-gh.outputs.email }}" >> $GITHUB_OUTPUT
-             elif [ ${{ github.event_name }} != 'workflow_dispatch' ]; then
-                echo "Grabbing the committer email"
-                echo "destination-email=$(git log -n 1 --pretty=format:%ae)" >> $GITHUB_OUTPUT
-             fi
-
-      - name: Find Slack user
-        id: find-slack-user
-        if: contains(steps.parse-proper-email.outputs.destination-email, 'patriotsoftware.com')
-        uses: scribd/find-slack-user-action@v1
-        with:
-          email: ${{ steps.parse-proper-email.outputs.destination-email }}
-          slack-token: ${{ inputs.slack-token }}
-
-      - shell: bash
-        id: parse_result
-        env:
-          INPUT_DESTINATION: ${{ inputs.destination }}
-          INPUT_FALLBACK_DESTINATION: ${{ inputs.fallback-destination }}
-          INPUT_MESSAGE: ${{ inputs.message }}
-          INPUT_RESULTS: ${{ inputs.results }}
-        run: |
-          echo "Input Destination is $INPUT_DESTINATION"
-          echo "Fallback Destination is $INPUT_FALLBACK_DESTINATION"
-          echo "Email is ${{ steps.parse-proper-email.outputs.destination-email }}"
-          echo "Member id is ${{ steps.find-slack-user.outputs.member-id }}"
-          # Make the results look nice
-
-          parsed_results=$(python ${{ github.action_path }}/parser.py "$INPUT_RESULTS")
-
-          # github actions doesn't support just passing multiline strings between steps
-          # so this needs to be formatted into the following
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "text<<$EOF" >> $GITHUB_OUTPUT
-          echo "$INPUT_MESSAGE" >> $GITHUB_OUTPUT
-          echo "$parsed_results" >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
-
-          if [[ "$INPUT_DESTINATION" == "#"* ]]; then
-            echo "Going to main destination channel"
-            echo "destination=$INPUT_DESTINATION" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_DESTINATION" == "committer" && "${{ steps.parse-proper-email.outputs.destination-email }}" == *"@patriotsoftware.com" ]]; then
-            echo "Going to main committer"
-            echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_FALLBACK_DESTINATION" == "disabled" ]]; then
-            echo "Fallback disabled, nothing will be delivered"
-            echo "destination=disabled" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" && "${{ steps.parse-proper-email.outputs.destination-email }}" == *"@patriotsoftware.com" ]]; then
-            echo "Going to fallback committer"
-            echo "destination=${{ steps.find-slack-user.outputs.member-id }}" >> $GITHUB_OUTPUT
-          elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
-            echo "Going to fallback channel"
-            echo "destination=$INPUT_FALLBACK_DESTINATION" >> $GITHUB_OUTPUT
-          else
-            echo "NO CONDITIONALS FOUND"
-            echo "Fallback is $INPUT_FALLBACK_DESTINATION"
-            echo "Input destination is $INPUT_DESTINATION"
-          fi
-
-      - shell: bash
-        if: ${{ steps.parse_result.outputs.destination != 'disabled' }}
-        run: |
-          echo "Email is ${{ steps.parse-proper-email.outputs.destination-email }}"
-          echo "Member Id is ${{ steps.find-slack-user.outputs.member-id }}"
-          echo "Destination is ${{ steps.parse_result.outputs.destination }}"
-
-      - name: Post to a Slack channel
-        id: slack
-        if: ${{ steps.parse_result.outputs.destination != 'disabled' }}
-        uses: slackapi/slack-github-action@v1.27
-        env:
-          SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
-        with:
-          channel-id: "${{ steps.parse_result.outputs.destination }}"
-          slack-message: "${{ steps.parse_result.outputs.text }}"
+# - name: Post to a Slack channel
+#   id: slack
+#   if: ${{ steps.parse_result.outputs.destination != 'disabled' }}
+#   uses: slackapi/slack-github-action@v1.27
+#   env:
+#     SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
+#   with:
+#     channel-id: "${{ steps.parse_result.outputs.destination }}"
+#     slack-message: "${{ steps.parse_result.outputs.text }}"

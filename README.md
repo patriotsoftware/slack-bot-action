@@ -1,11 +1,8 @@
 # PatriotSoftware.GHA.SlackBot
 
-A GitHub Action for sending alerts on github actions to slack. We recommend using patriotsoftware/slackbot@v1 to get the latest changes. If new features require breaking changes, we will release them to @v2. You can also use a full semantic version tag.
+A GitHub Action for sending alerts on github actions to slack.
 
-NOTE: Ensure the GitHub username is accessible: 
-```
-https://api.github.com/users/{ GitHub username }/events/public
-```
+NOTE: Ensure the GitHub username is accessible: https://api.github.com/users/{ GitHub username }/events/public
 
 ## Example Usage
 
