@@ -1,16 +1,11 @@
-# PatriotSoftware.GHA.SlackBot
+# Slack Bot Action
 
-A GitHub Action for sending alerts on github actions to slack. We recommend using patriotsoftware/slackbot@v1 to get the latest changes. If new features require breaking changes, we will release them to @v2. You can also use a full semantic version tag.
-
-NOTE: Ensure the GitHub username is accessible: 
-```
-https://api.github.com/users/{ GitHub username }/events/public
-```
+A GitHub Action for sending alerts on github actions to slack.
 
 ## Example Usage
 
 ```yaml
-- uses: patriotsoftware/slackbot@v1
+- uses: synergydatasystems/slackbot@v1
   with:
     destination: committer
     message: "A new slackbot update has been triggered."
@@ -18,6 +13,10 @@ https://api.github.com/users/{ GitHub username }/events/public
     github-token: ${{ secrets.GITHUB_TOKEN }}
     fallback-destination: "#channel-if-any-destination-fails"
 ```
+
+## Mapping GitHub users to Slack users
+
+Located in `.github/user_mapping.yml` is a key value pair yaml file that needs to contain a `github_username: slack_id` for every user who commits to our repos. This ensures the `committer` destination always finds the correct slack user.
 
 ## Inputs
 
@@ -40,17 +39,12 @@ results:
 github-token:
   GitHub Repository to for getting commit email.
   Use this most times: ${{ secrets.GITHUB_TOKEN }}"
-github-repository:
-  GitHub Repository to for getting commit email.
-  Use this most times: ${{ github.repository }}"
-github-sha:
-  GitHub SHA to for getting commit email.
-  Use this most times: ${{ github.sha }}
 remove-branch-prefix:
-    Removes branch /refs/head/ from string instances of /refs/heads. Values: true/false. Allows use of ${{ github.ref }} to print without /refs/heads
-    Default: true
+  Removes branch /refs/head/ from string instances of /refs/heads. Values: true/false. Allows use of ${{ github.ref }} to print without /refs/heads
+  Default: true
 fallback-destination:
-    The channel (in the format `#channel`) used for when any of the previous destinations fail.
+  The channel (in the format `#channel`) used for when any of the previous destinations fail.
+  Set to "disabled" to skip a fallback
 ```
 
 ## Outputs
@@ -59,12 +53,3 @@ fallback-destination:
 validate-output:
   This is for verification that the code was run successfully.
 ```
-
-To test locally either run the test-action workflow with unique inputs, or run the main.go locally.
-
-## Testing the action locally
-
-- Create a .slack_token file with your slack token
-- `export INPUT_MESSAGE="Your message"`
-- `export INPUT_DESTINATION="#yourChannel"` or `"@your_user"`
-- `go run main.go`

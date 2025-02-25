@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# shellcheck disable=SC2129
+
+pip3 install pyyaml --quiet --break-system-packages
+
+parse_results() {
+  local parsed_results
+  parsed_results=$("$BASE_PATH/results_parser" "$INPUT_RESULTS")
+
+  # https://github.com/orgs/community/discussions/116619
+  echo 'text<<EOF' >> "$GITHUB_OUTPUT"
+  echo "$INPUT_MESSAGE" >> "$GITHUB_OUTPUT"
+  echo "$parsed_results" >> "$GITHUB_OUTPUT"
+  echo 'EOF' >> "$GITHUB_OUTPUT"
+}
+
+# figures out which github user triggered this workflow run
+# and returns the slack id for that user
+determine_committer() {
+  local committer
+
+  if [[ -n "$GITHUB_TRIGGERING_ACTOR" ]]; then
+    committer="$GITHUB_TRIGGERING_ACTOR"
+  elif [[ -n "$GITHUB_ACTOR" ]]; then
+    committer="$GITHUB_ACTOR"
+  else
+    committer=$COMMITTER_GITHUB
+  fi
+
+  "$BASE_PATH/slack_id" "$BASE_PATH/$MAPPING_FILE" "$committer"
+}
+
+# parses the destination channel order is channel then committer
+# if "disabled" is passed in, it is used later to skip sending the message
+parse_destination() {
+  local destination
+
+  if [[ "$INPUT_DESTINATION" == "#"* ]]; then
+    echo "Going to main destination channel"
+    destination="$INPUT_DESTINATION"
+  elif [[ "$INPUT_DESTINATION" == "committer" ]]; then
+    echo "Going to main committer"
+    destination="$(determine_committer)"
+  elif [[ "$INPUT_FALLBACK_DESTINATION" == "disabled" ]]; then
+    echo "Fallback disabled, nothing will be delivered"
+    destination="disabled"
+  elif [[ "$INPUT_FALLBACK_DESTINATION" == "#"* ]]; then
+    echo "Going to fallback channel"
+    destination="$INPUT_FALLBACK_DESTINATION"
+  elif [[ "$INPUT_FALLBACK_DESTINATION" == "committer" ]]; then
+    echo "Going to fallback committer"
+    destination="$(determine_committer)"
+  fi
+
+  echo "destination=$destination" >> "$GITHUB_OUTPUT"
+}
+
+parse_results
+parse_destination
